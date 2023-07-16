@@ -1,11 +1,12 @@
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 # Load environment variables from .env
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
@@ -15,8 +16,8 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -25,13 +26,28 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-EXTERNAL_APPS = []
+PROJECT_APPS = [
+    "api.apps.ApiConfig",
+    "users.apps.UsersConfig",
+    "ecommerce.apps.EcommerceConfig",
+]
 
-AUTH_APPS = []
+EXTERNAL_APPS = [
+    "rest_framework",
+    "corsheaders",
+]
 
+AUTH_APPS = [
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+]
+
+# Project Apps
+INSTALLED_APPS += PROJECT_APPS
 INSTALLED_APPS += EXTERNAL_APPS
 INSTALLED_APPS += AUTH_APPS
 
+# MIDDLEWARES
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -95,6 +111,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
