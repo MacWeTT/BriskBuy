@@ -27,7 +27,6 @@ INSTALLED_APPS = [
 ]
 
 PROJECT_APPS = [
-    "api.apps.ApiConfig",
     "users.apps.UsersConfig",
     "ecommerce.apps.EcommerceConfig",
 ]
@@ -41,11 +40,6 @@ AUTH_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
 ]
-
-# Project Apps
-INSTALLED_APPS += PROJECT_APPS
-INSTALLED_APPS += EXTERNAL_APPS
-INSTALLED_APPS += AUTH_APPS
 
 # MIDDLEWARES
 MIDDLEWARE = [
@@ -117,3 +111,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Project Apps
+INSTALLED_APPS += PROJECT_APPS
+INSTALLED_APPS += EXTERNAL_APPS
+INSTALLED_APPS += AUTH_APPS
