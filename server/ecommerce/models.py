@@ -29,6 +29,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
 
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
     stock = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     digital = models.BooleanField(default=False, null=True, blank=True)

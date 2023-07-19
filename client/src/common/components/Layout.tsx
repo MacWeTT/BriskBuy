@@ -1,4 +1,6 @@
 import React, { ReactNode } from "react";
+import { ChakraProvider, CSSReset } from "@chakra-ui/react";
+import theme from "../theme";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -8,11 +10,12 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div>
+    <ChakraProvider theme={theme}>
+      <CSSReset />
       <Navbar />
       {children}
       <Footer />
-    </div>
+    </ChakraProvider>
   );
 };
 
