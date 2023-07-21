@@ -26,14 +26,15 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    slug = models.SlugField(max_length=100, unique=True)
-
     name = models.CharField(max_length=100)
+    image = models.ImageField(
+        upload_to="ProductImages/", null=True, blank=True, default="noimage.png"
+    )
+    slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     stock = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     digital = models.BooleanField(default=False, null=True, blank=True)
-    # image
 
     class Meta:
         verbose_name_plural = "Products"

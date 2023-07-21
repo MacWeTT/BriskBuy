@@ -4,7 +4,14 @@ import CustomLink from "./UI/CustomLink";
 
 const CategoryNav = () => {
   return (
-    <Flex justifyContent="space-evenly" alignItems="center" p={2}>
+    <Flex
+      justifyContent="space-evenly"
+      alignItems="center"
+      p={2}
+      color="quaternary"
+      backgroundColor="secondary"
+      overflowX="clip"
+    >
       <CustomLink link="All Categories" url="/categories" mx={4} />
       <CustomLink link="Apparel" url="/categories/apparel" mx={4} />
       <CustomLink link="Smartphones" url="/categories/smartphones" mx={4} />

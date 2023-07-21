@@ -1,13 +1,26 @@
 import React from "react";
-import { Button, ChakraProps } from "@chakra-ui/react";
+import { Button, ButtonProps } from "@chakra-ui/react";
+import Router from "next/router";
 
-interface CustomButtonProps extends ChakraProps {
+interface CustomButtonProps extends ButtonProps {
   variant: string;
   text: string;
-  props?: ChakraProps;
+  route?: string;
+  props?: ButtonProps;
 }
 
-const CustomButton = ({ variant, text }: CustomButtonProps) => {
+const CustomButton = ({
+  variant,
+  text,
+  route,
+  ...props
+}: CustomButtonProps) => {
+  const handleButtonRouting = () => {
+    if (route) {
+      Router.push(route);
+    }
+  };
+
   switch (variant) {
     case "border":
       return (
@@ -17,11 +30,16 @@ const CustomButton = ({ variant, text }: CustomButtonProps) => {
           color="primary"
           bg="transparent"
           size="md"
-          _hover={{ boxShadow: "0 0 8px rgba(0, 0, 0, 0.2)" }}
+          _hover={{
+            boxShadow: "0 0 8px rgba(0, 0, 0, 0.2)",
+            bg: "tertiary",
+            color: "quaternary",
+          }}
           _focus={{ boxShadow: "none" }}
           _active={{
             transform: "scale(0.98)",
           }}
+          {...props}
         >
           {text}
         </Button>
@@ -38,6 +56,7 @@ const CustomButton = ({ variant, text }: CustomButtonProps) => {
             bg: "tertiary",
             transform: "scale(0.98)",
           }}
+          {...props}
         >
           {text}
         </Button>

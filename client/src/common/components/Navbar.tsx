@@ -2,14 +2,21 @@ import React from "react";
 import Link from "next/link";
 
 //UI Components
-import { Flex } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
 import CustomText from "./UI/CustomText";
 import CustomLink from "./UI/CustomLink";
 import CategoryNav from "./CategoryNav";
 
 //React-Icons
-import { BiCurrentLocation, BiBookmark } from "react-icons/bi";
+import { BiCurrentLocation, BiBookmark, BiShoppingBag } from "react-icons/bi";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { FaSearch } from "react-icons/fa";
 
 const Navbar = () => {
   return (
@@ -31,8 +38,39 @@ const Navbar = () => {
             </Flex>
           </Link>
         </Flex>
+        <Box>
+          <InputGroup>
+            <Input
+              type="text"
+              placeholder="Search for products..."
+              bg="white"
+              fontSize="lg"
+              width="500px"
+              _focus={{ color: "primary" }}
+              ml={2}
+            />
+            <InputRightElement>
+              <Box color="primary" bg="quaternary" p={2} rounded="lg">
+                <FaSearch />
+              </Box>
+            </InputRightElement>
+          </InputGroup>
+        </Box>
         <Flex justifyContent="center" alignItems="center">
           <CustomLink url="/profile" link="Manas" />
+          <Flex
+            position="relative"
+            justifyContent="center"
+            alignItems="center"
+            fontSize="32"
+            px="1"
+            ml="2"
+            _hover={{
+              transform: "scale(1.1)",
+            }}
+          >
+            <BiShoppingBag />
+          </Flex>
           <Link href="/cart">
             <Flex
               position="relative"

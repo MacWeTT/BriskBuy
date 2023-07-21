@@ -5,9 +5,7 @@ from .models import Product, Category
 class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
-        exclude = [
-            "slug",
-        ]
+        fields = "__all__"
 
 
 class CategorySerializer(ModelSerializer):
