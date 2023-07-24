@@ -1,108 +1,126 @@
-import React, {
-  useState,
-  // useEffect, useRef
-} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Router from "next/router";
 
 //UI Components
-import { Box, Button, Image } from "@chakra-ui/react";
-import { Card, CardBody } from "@chakra-ui/react";
+import { Flex, Button, Divider, Image, Box } from "@chakra-ui/react";
+import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 import { GrNext, GrPrevious } from "react-icons/gr";
 
 //Miscellaneous Imports
 import { Product } from "@/common/types/product";
+import CustomText from "../CustomText";
 
 interface HorizontalCarouselProps {
   products: Product[];
-  //   showMore: Function;
+  hasMore: boolean;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const HorizontalCarousel: React.FC<HorizontalCarouselProps> = ({
   products,
-  //   showMore,
+  hasMore,
+  setPage,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
   };
-
   const handlePrev = () => {
     setCurrentIndex(
       (prevIndex) => (prevIndex - 1 + products.length) % products.length
     );
   };
-
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
   const handleRouting = (slug: string) => {
     Router.push(`/products/${slug}`);
   };
 
-  //   const [lastCardVisible, setLastCardVisible] = useState(false);
-  //   const lastCardRef = useRef<HTMLDivElement>(null);
+  const [lastCardVisible, setLastCardVisible] = useState(false);
+  const lastCardRef = useRef<HTMLDivElement>(null);
 
-  //   useEffect(() => {
-  //     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.target === lastCardRef.current) {
-  //           setLastCardVisible(entry.isIntersecting);
-  //         }
-  //       });
-  //     };
+  useEffect(() => {
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.target === lastCardRef.current) {
+          setLastCardVisible(entry.isIntersecting);
+        }
+      });
+    };
 
-  //     const observer = new IntersectionObserver(handleIntersection, {
-  //       root: null,
-  //       rootMargin: "0px",
-  //       threshold: 0.9,
-  //     });
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      rootMargin: "120px",
+      threshold: 0.9,
+    });
 
-  //     if (lastCardRef.current) {
-  //       observer.observe(lastCardRef.current);
-  //     }
+    const currentRef = lastCardRef.current;
 
-  //     return () => {
-  //       if (lastCardRef.current) {
-  //         console.log("visible");
-  //         observer.unobserve(lastCardRef.current);
-  //       }
-  //     };
-  //   }, [products]);
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
 
-  //   useEffect(() => {
-  //     if (lastCardVisible) {
-  //       showMore();
-  //     }
-  //   }, [lastCardVisible]);
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [products]);
+
+  useEffect(() => {
+    if (lastCardVisible && hasMore) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }, [lastCardVisible, hasMore, setPage]);
 
   return (
     <Box
-      position="relative"
+      gap={4}
       width="100%"
-      height="300px"
+      height="450px"
       overflow="hidden"
+      position="relative"
       backgroundColor="quaternary"
     >
       {products.map((image, index) => (
         <Card
           key={index}
-          maxW="sm"
+          width="300px"
+          height="375px"
           borderRadius="lg"
           my={8}
           mx={4}
-          position="absolute"
+          bgColor="quaternary"
           transition="transform 0.5s ease-in-out"
-          transform={`translateX(${110 * (index - currentIndex)}%)`}
+          boxShadow="0px 0px 10px rgba(0, 0, 0, 0.25)"
+          transform={`translateX(-${100 * currentIndex}%)`}
           onClick={() => handleRouting(products[index].slug)}
+          ref={index === products.length - 1 ? lastCardRef : null}
         >
-          <CardBody>
+          <CardHeader>
             <Image
               src={`${backendURL}${image.image}`}
               alt={image.name}
               width="200px"
               height="200px"
               objectFit="contain"
+              mixBlendMode="multiply"
               borderRadius="lg"
+            />
+          </CardHeader>
+          <Divider />
+          <CardBody>
+            <CustomText
+              variant="paragraph"
+              fontSize="2xl"
+              text={image.name}
+              overflowWrap="normal"
+              lineHeight="25px"
+              mb={2}
+            />
+            <CustomText
+              variant="paragraph"
+              text={`${image.price}`}
+              color="tertiary"
             />
           </CardBody>
         </Card>

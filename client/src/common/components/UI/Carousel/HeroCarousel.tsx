@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import Router from "next/router";
 
 //UI Components
-import {
-  Box,
-  Button,
-  Flex,
-  ChakraProps,
-  Image,
-  Skeleton,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, ChakraProps, Image } from "@chakra-ui/react";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import CustomText from "../CustomText";
 

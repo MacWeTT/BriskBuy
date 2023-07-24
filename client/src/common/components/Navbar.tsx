@@ -1,14 +1,10 @@
-import React from "react";
+import React, { useState, ChangeEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 //UI Components
-import {
-  Flex,
-  Box,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { Flex, Box, Input } from "@chakra-ui/react";
+import { InputGroup, InputRightElement } from "@chakra-ui/react";
 import CustomText from "./UI/CustomText";
 import CustomLink from "./UI/CustomLink";
 import CategoryNav from "./CategoryNav";
@@ -19,6 +15,17 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
 
 const Navbar = () => {
+  const [searchInput, setSearchInput] = useState("");
+
+  const router = useRouter();
+  const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+    console.log(searchInput);
+  };
+  const handleSearch = () => {
+    router.push(`/products?query=${searchInput}`);
+  };
+
   return (
     <>
       <Flex
@@ -46,11 +53,20 @@ const Navbar = () => {
               bg="white"
               fontSize="lg"
               width="500px"
-              _focus={{ color: "primary" }}
+              color="secondary"
               ml={2}
+              onChange={handleSearchInput}
             />
             <InputRightElement>
-              <Box color="primary" bg="quaternary" p={2} rounded="lg">
+              <Box
+                color="primary"
+                bg="quaternary"
+                p={2}
+                rounded="lg"
+                transition="all 0.4s ease-in-out"
+                _hover={{ cursor: "pointer", rounded: "full" }}
+                onClick={handleSearch}
+              >
                 <FaSearch />
               </Box>
             </InputRightElement>

@@ -13,6 +13,7 @@ const CustomButton = ({
   variant,
   text,
   route,
+  onClick,
   ...props
 }: CustomButtonProps) => {
   const handleButtonRouting = () => {
@@ -39,6 +40,7 @@ const CustomButton = ({
           _active={{
             transform: "scale(0.98)",
           }}
+          onClick={route ? handleButtonRouting : onClick}
           {...props}
         >
           {text}
@@ -56,6 +58,7 @@ const CustomButton = ({
             bg: "tertiary",
             transform: "scale(0.98)",
           }}
+          onClick={route ? handleButtonRouting : onClick}
           {...props}
         >
           {text}

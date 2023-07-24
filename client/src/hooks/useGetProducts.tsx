@@ -25,7 +25,6 @@ export default function useGetProducts(page: number) {
         setProducts((results) => {
           return [...new Set([...results, ...res.data.results])];
         });
-        console.log(products);
         setHasMore(res.data.next !== null);
         setLoading(false);
       })

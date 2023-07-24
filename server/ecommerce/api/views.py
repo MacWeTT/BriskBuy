@@ -5,16 +5,13 @@ from rest_framework.pagination import PageNumberPagination
 from ..serializers import ProductSerializer, CategorySerializer
 from ..models import Product, Category
 from django.db.models import Q
+from django.utils.text import slugify
 
 
 # Create your views here.
 @api_view(["GET"])
 def getRoutes(request):
-    routes = [
-        "api/",
-        "api/products/",
-        "api/category/"
-    ]
+    routes = ["api/", "api/products/", "api/category/"]
     return Response(routes)
 
 
@@ -28,18 +25,27 @@ class ProductListView(APIView):
 
     def get(self, request):
         query = request.GET.get("query", None)
+
         if query:
+            is_slug = query == slugify(query)
+
+            if is_slug:
+                try:
+                    product = Product.objects.get(slug=slugify(query))
+                    serializer = self.serializer_class(product)
+                    return Response(serializer.data)
+                except Product.DoesNotExist:
+                    return Response({"message": "Product not found"}, status=404)
+
             products = Product.objects.filter(
-                Q(name__icontains=query) | Q(description__icontains=query)
+                Q(name__icontains=query)
+                | Q(description__icontains=query)
+                | Q(slug=slugify(query))
             )
-
             category_products = Product.objects.filter(category__name__icontains=query)
-
             products = products.union(category_products)
-
         else:
             products = Product.objects.all()
-            
 
         paginator = self.pagination_class()
         paginated_products = paginator.paginate_queryset(products, request)

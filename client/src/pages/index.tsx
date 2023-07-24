@@ -20,6 +20,7 @@ import useGetProducts from "@/hooks/useGetProducts";
 function Home() {
   const [page, setPage] = useState(1);
   const { loading, products, hasMore } = useGetProducts(page);
+  const heroCarouselProducts = products?.slice(0, 5);
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -66,13 +67,15 @@ function Home() {
               text={home.carouselHeading}
               textAlign="center"
             />
-            {!loading && products && <HeroCarousel products={products} />}
+            {!loading && products && (
+              <HeroCarousel products={heroCarouselProducts} />
+            )}
             {loading && (
               <Skeleton height="400px" width="400px" borderRadius="lg" />
             )}
           </Flex>
         </Flex>
-        <Box mx={8} bgColor="quaternary" p={8}>
+        {/* <Box mx={8} bgColor="quaternary" p={8}>
           {products && (
             <Flex justifyContent="space-around" flexWrap="wrap">
               {products?.map((product) => (
@@ -114,20 +117,16 @@ function Home() {
               ))}
             </Flex>
           )}
-        </Box>
+        </Box> */}
         <Box mx={8} bgColor="quaternary" p={8}>
           {products && (
             <Flex justifyContent="space-around" flexWrap="wrap">
-              <HorizontalCarousel products={products} />
+              <HorizontalCarousel
+                products={products}
+                hasMore={hasMore}
+                setPage={setPage}
+              />
             </Flex>
-          )}
-          {hasMore && (
-            <CustomButton
-              variant="solid"
-              text="Load More"
-              w="max-content"
-              onClick={() => setPage(page + 1)}
-            />
           )}
         </Box>
       </PageWrapper>
