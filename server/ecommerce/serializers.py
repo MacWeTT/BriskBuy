@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Product, Category
+from .models import *
 
 
 class ProductSerializer(ModelSerializer):
@@ -14,3 +14,17 @@ class CategorySerializer(ModelSerializer):
         exclude = [
             "slug",
         ]
+
+
+class OrderItemSerializer(ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = "__all__"
+
+
+class OrderSerializer(ModelSerializer):
+    items = OrderItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = "__all__"
