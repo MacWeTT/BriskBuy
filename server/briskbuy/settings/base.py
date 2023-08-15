@@ -1,6 +1,5 @@
 from pathlib import Path
 from dotenv import load_dotenv
-from datetime import timedelta
 import os
 
 # Load environment variables from .env
@@ -14,16 +13,18 @@ DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
+SITE_ID = 1
 
 # Application definition
 INSTALLED_APPS = [
-    "jazzmin",
+    # "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 PROJECT_APPS = [
@@ -33,13 +34,43 @@ PROJECT_APPS = [
 
 EXTERNAL_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
 ]
 
 AUTH_APPS = [
     "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
+    "dj_rest_auth.registration",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
 ]
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "macwett-access",
+    "JWT_AUTH_REFRESH_COOKIE": "macwett-refresh",
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ]
+}
+
+AUTH_USER_MODEL = "users.User"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 
 # MIDDLEWARES
 MIDDLEWARE = [
@@ -58,7 +89,7 @@ ROOT_URLCONF = "briskbuy.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -72,7 +103,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "briskbuy.wsgi.application"
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -89,30 +119,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "Asia/Kolkata"
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-
+# Static and media
 MEDIA_URL = "/media/"
+STATIC_URL = "static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
