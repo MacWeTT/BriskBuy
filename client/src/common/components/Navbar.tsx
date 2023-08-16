@@ -73,21 +73,23 @@ const Navbar = () => {
           </InputGroup>
         </Box>
         <Flex justifyContent="center" alignItems="center">
-          <CustomLink url="/profile" link="Manas" />
-          <Flex
-            position="relative"
-            justifyContent="center"
-            alignItems="center"
-            fontSize="32"
-            px="1"
-            ml="2"
-            _hover={{
-              transform: "scale(1.1)",
-            }}
-          >
-            <BiShoppingBag />
-          </Flex>
-          <Link href="/cart">
+          <CustomLink url="/user/profile" link="Manas" />
+          <Link href="/user/orders">
+            <Flex
+              position="relative"
+              justifyContent="center"
+              alignItems="center"
+              fontSize="32"
+              px="1"
+              ml="2"
+              _hover={{
+                transform: "scale(1.1)",
+              }}
+            >
+              <BiShoppingBag />
+            </Flex>
+          </Link>
+          <Link href="/user/cart">
             <Flex
               position="relative"
               justifyContent="center"
@@ -118,7 +120,7 @@ const Navbar = () => {
               </Flex>
             </Flex>
           </Link>
-          <Link href="/wishlist">
+          <Link href="/user/wishlist">
             <Flex
               position="relative"
               justifyContent="center"

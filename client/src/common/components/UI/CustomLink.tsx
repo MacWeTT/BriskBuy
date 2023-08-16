@@ -16,7 +16,9 @@ const CustomLink = ({ link, url, ...props }: CustomLinkProps) => {
         _hover={{
           cursor: "pointer",
           textDecoration: "underline",
+          color: "tertiary",
         }}
+        textDecoration="underline"
       >
         {link}
       </Box>

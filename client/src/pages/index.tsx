@@ -3,8 +3,8 @@ import Head from "next/head";
 
 //Chakra Components
 import { Flex, Box, Image, Skeleton } from "@chakra-ui/react";
-import { Card, CardBody, CardFooter } from "@chakra-ui/react";
-import { Divider, ButtonGroup, Stack } from "@chakra-ui/react";
+// import { Card, CardBody, CardFooter } from "@chakra-ui/react";
+// import { Divider, ButtonGroup, Stack } from "@chakra-ui/react";
 
 //Custom Components
 import PageWrapper from "@/common/components/UI/PageWrapper";
@@ -71,7 +71,9 @@ function Home() {
               <HeroCarousel products={heroCarouselProducts} />
             )}
             {loading && (
-              <Skeleton height="400px" width="400px" borderRadius="lg" />
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <Skeleton height="400px" width="400px" borderRadius="lg" />
+              </Box>
             )}
           </Flex>
         </Flex>

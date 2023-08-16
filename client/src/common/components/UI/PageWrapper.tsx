@@ -8,7 +8,7 @@ interface PageWrapperProps extends ChakraProps {
 
 const PageWrapper = ({ children, ...props }: PageWrapperProps) => {
   return (
-    <Box minHeight="100vh" maxWidth="100vw" overflowX="hidden">
+    <Box minHeight="100vh" maxWidth="100vw" overflowX="hidden" {...props}>
       {children}
     </Box>
   );
