@@ -8,11 +8,11 @@ from dj_rest_auth.registration.views import (
 
 urlpatterns = [
     # SIMPLE_JWT
-    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    # path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # CUSTOM VIEWS
     path("auth/", include("dj_rest_auth.urls")),
-    path("registration/", include("dj_rest_auth.registration.urls")),
+    path("auth/registration/", include("dj_rest_auth.registration.urls")),
 ]
 
 # SOCIALS

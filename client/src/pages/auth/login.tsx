@@ -1,5 +1,10 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { useLoginUserMutation } from "@/common/redux/api/authAPI";
+import { setUser } from "@/common/redux/reducers/userSlice";
 
 // Chakra UI
 import {
@@ -26,18 +31,24 @@ import CustomLink from "@/common/components/UI/CustomLink";
 import { BsGoogle, BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const toast = useToast();
+
+  // const user = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const toast = useToast();
+  const router = useRouter();
+  const [login] = useLoginUserMutation();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     toast({
       position: "top",
       status: "info",
       title: "Logging you in...",
-      duration: 3000,
+      duration: 800,
     });
     if (!password) {
       toast({
@@ -48,6 +59,32 @@ const Login = () => {
         duration: 3000,
         isClosable: true,
       });
+    } else {
+      try {
+        const response = await login({ email, password }).unwrap();
+        console.log(response);
+        dispatch(setUser(response));
+        toast({
+          position: "top",
+          status: "success",
+          title: "Login Successful",
+          description: "You have been logged in successfully. Redirecting...",
+          duration: 1500,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      } catch (error: any) {
+        toast({
+          position: "top",
+          status: "error",
+          title: "Login Failed",
+          description: `${error.error}`,
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 

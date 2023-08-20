@@ -16,11 +16,15 @@ import HorizontalCarousel from "@/common/components/UI/Carousel/HorizontalCarous
 //Miscellaneous Imports
 import { home } from "@/common/typography/home";
 import useGetProducts from "@/hooks/useGetProducts";
+import { RootState } from "@/common/redux/store";
+// import { useSelector } from "react-redux";
 
 function Home() {
   const [page, setPage] = useState(1);
   const { loading, products, hasMore } = useGetProducts(page);
   const heroCarouselProducts = products?.slice(0, 5);
+
+  // const { user } = useSelector((state: RootState) => state.user);
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 

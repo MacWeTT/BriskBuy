@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { RootState } from "@/common/redux/store";
 
 //UI Components
 import { Flex, Box, Input } from "@chakra-ui/react";
@@ -15,8 +17,11 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
 
 const Navbar = () => {
-  const [searchInput, setSearchInput] = useState("");
+  const { user } = useSelector((state: RootState) => state.user);
+  const { cartItems } = useSelector((state: RootState) => state.cart);
+  const { wishlistItems } = useSelector((state: RootState) => state.wishlist);
 
+  const [searchInput, setSearchInput] = useState("");
   const router = useRouter();
   const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -36,7 +41,7 @@ const Navbar = () => {
         bgColor="primary"
         color="quaternary"
       >
-        <Flex justifyContent="center" alignItems="center">
+        <Flex justifyContent="center" alignItems="center" gap={6}>
           <CustomLink link="BriskBuy" url="/" mr={4} />
           <Link href="/profile">
             <Flex justifyContent="center" alignItems="center">
@@ -73,7 +78,7 @@ const Navbar = () => {
           </InputGroup>
         </Box>
         <Flex justifyContent="center" alignItems="center">
-          <CustomLink url="/user/profile" link="Manas" />
+          <CustomLink url="/user/profile" link={user.first_name} />
           <Link href="/user/orders">
             <Flex
               position="relative"
@@ -103,9 +108,10 @@ const Navbar = () => {
             >
               <AiOutlineShoppingCart />
               <Flex
+                display={cartItems.length > 0 ? "flex" : "none"}
                 borderRadius="9999px"
                 bgColor="tertiary"
-                color="quaternary"
+                color="black"
                 position="absolute"
                 right="-5px"
                 top="-5px"
@@ -116,7 +122,7 @@ const Navbar = () => {
                 alignItems="center"
                 justifyContent="center"
               >
-                1
+                {cartItems.length}
               </Flex>
             </Flex>
           </Link>
@@ -134,9 +140,10 @@ const Navbar = () => {
             >
               <BiBookmark />
               <Flex
+                display={wishlistItems.length > 0 ? "flex" : "none"}
                 borderRadius="9999px"
                 bgColor="tertiary"
-                color="quaternary"
+                color="black"
                 position="absolute"
                 right="-5px"
                 top="-5px"
@@ -147,7 +154,7 @@ const Navbar = () => {
                 alignItems="center"
                 justifyContent="center"
               >
-                1
+                {wishlistItems.length}
               </Flex>
             </Flex>
           </Link>

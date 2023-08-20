@@ -55,6 +55,7 @@ AUTHENTICATION_BACKENDS = [
 
 REST_AUTH = {
     "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
     "JWT_AUTH_COOKIE": "macwett-access",
     "JWT_AUTH_REFRESH_COOKIE": "macwett-refresh",
 }

@@ -1,15 +1,8 @@
 export const colors = {
-  primary: "#222831",
-  secondary: "#393E46",
-  tertiary: "#00ADB5",
-  quaternary: "#EEEEEE",
+  primary: "#1C6758",
+  secondary: "#3D8361",
+  tertiary: "#D6CDA4",
+  quaternary: "#EEF2E6",
   black: "#000000",
   white: "#FFFFFF",
-};
-
-export const tailwindColors = {
-  primary: "bg-gray-900",
-  secondary: "bg-gray-700",
-  tertiary: "bg-teal-500",
-  quaternary: "bg-gray-100",
 };
