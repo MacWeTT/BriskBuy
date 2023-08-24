@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from ..serializers import ProductSerializer, CategorySerializer, OrderSerializer
-from ..models import Product, Category, Order, Customer
+from ..models import Product, Category, Order
 from django.db.models import Q
 from django.utils.text import slugify
 

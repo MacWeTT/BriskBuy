@@ -1,10 +1,29 @@
-import { useState } from "react";
+import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import { useState, useEffect } from "react";
+
+//Redux
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from "@/common/redux/reducers/cartSlice";
+import { RootState } from "@/common/redux/store";
 
 //UI Components
-import { Flex, Box, Image, Skeleton, Card, CardBody } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Image,
+  Skeleton,
+  Card,
+  CardBody,
+  Container,
+  List,
+  ListItem,
+  ListIcon,
+  OrderedList,
+  UnorderedList,
+  useToast,
+} from "@chakra-ui/react";
 import { Divider } from "@chakra-ui/react";
 import CustomText from "@/common/components/UI/CustomText";
 import CustomButton from "@/common/components/UI/CustomButton";
@@ -18,39 +37,50 @@ import useGetProducts from "@/hooks/useGetProducts";
 
 async function fetchProductData(slug: string) {
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  console.log(backendURL);
   try {
     const response = await axios.get(`${backendURL}/api/products/`, {
       params: { query: slug },
     });
-    // console.log(response);
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     throw err;
   }
 }
+
 interface ProductDetailsPageProps {
   product: Product;
 }
+
 const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
   const router = useRouter();
+  const toast = useToast();
+  const dispatch = useDispatch();
+
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [page, setPage] = useState(1);
-  const { loading, products, hasMore } = useGetProducts(page);
+  const { products, hasMore } = useGetProducts(page);
+  const description = product.description.split("\r\n");
+
+  const { cartItems } = useSelector((state: RootState) => state.cart);
+  const [alreadyInCart, setAlreadyInCart] = useState(false);
+
+  useEffect(() => {
+    if (cartItems.find((item) => item.id === product.id))
+      setAlreadyInCart(true);
+  }, [cartItems, product]);
 
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
-
   return (
     <>
       <Head>
-        <title>{product.name}</title>
+        <title>{product.name} | BriskBuy</title>
       </Head>
       <PageWrapper>
-        <Flex justifyContent="space-between" wrap="wrap" m={8}>
-          <Flex direction="row">
+        <Flex justifyContent="space-around" my={8} wrap="wrap">
+          <Flex direction="row" mb={12}>
             <Card w={20} h={20} my={8}>
               <CardBody p={1}>
                 <Image
@@ -62,11 +92,12 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
             <Image
               src={`${backendURL}${product.image}`}
               alt={product.name}
-              width="600px"
-              height="600px"
+              ml={8}
+              width="30rem"
+              height="30rem"
             />
           </Flex>
-          <Box>
+          <Box mt={8}>
             <CustomText variant="heading" text={product.name} />
             <Divider />
             <CustomText
@@ -75,10 +106,39 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
               text={`₹${product.price.toLocaleString("en-IN")}`}
             />
             <CustomText variant="paragraph" text="Inclusive of all taxes." />
-            <Flex gap={6} mt={8}>
-              <CustomButton variant="solid" text="Add to Cart" />
-              <CustomButton variant="border" text="Buy Now" />
+            <Flex gap={6} my={4}>
+              <CustomButton
+                variant="solid"
+                text={alreadyInCart ? "In Cart" : "Add to Cart"}
+                onClick={() => {
+                  if (alreadyInCart) {
+                    toast({
+                      position: "top",
+                      status: "info",
+                      title: "Item already in cart.",
+                      duration: 900,
+                    });
+                    return;
+                  }
+                  dispatch(addItem(product));
+                  setAlreadyInCart(true);
+                  toast({
+                    position: "top",
+                    status: "success",
+                    title: "Item added to cart !",
+                    duration: 900,
+                  });
+                }}
+              />
+              <CustomButton variant="border" text="Add to wishlist" />
             </Flex>
+            <Divider />
+            <CustomText variant="subheading" text="Description" my={2} />
+            <UnorderedList>
+              {description.map((item) => (
+                <ListItem key={item}>{item}</ListItem>
+              ))}
+            </UnorderedList>
           </Box>
         </Flex>
         <Divider />
@@ -102,15 +162,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         notFound: true,
       };
     }
-
     const product = await fetchProductData(slug as string);
-    console.log(product);
     if (!product) {
       return {
         notFound: true,
       };
     }
-
     return {
       props: {
         product,

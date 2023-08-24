@@ -1,10 +1,11 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoginUserMutation } from "@/common/redux/api/authAPI";
 import { setUser } from "@/common/redux/reducers/userSlice";
+import { RootState } from "@/common/redux/store";
 
 // Chakra UI
 import {
@@ -31,17 +32,21 @@ import CustomLink from "@/common/components/UI/CustomLink";
 import { BsGoogle, BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const toast = useToast();
+  //Check if user is already logged in
+  const { isLoggedIn } = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    if (isLoggedIn) router.push("/");
+  });
 
-  // const user = useAuth();
+  const router = useRouter();
+  const toast = useToast();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const router = useRouter();
-  const [login] = useLoginUserMutation();
+  const [login, { isLoading }] = useLoginUserMutation();
 
   const handleLogin = async () => {
     toast({
@@ -63,7 +68,6 @@ const Login = () => {
       try {
         const response = await login({ email, password }).unwrap();
         console.log(response);
-        dispatch(setUser(response));
         toast({
           position: "top",
           status: "success",
@@ -73,6 +77,7 @@ const Login = () => {
           isClosable: true,
         });
         setTimeout(() => {
+          dispatch(setUser(response));
           router.push("/");
         }, 1500);
       } catch (error: any) {
@@ -91,7 +96,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Briskbuy | Login</title>
+        <title>Login | Briskbuy</title>
       </Head>
       <PageWrapper
         display="flex"
@@ -157,11 +162,12 @@ const Login = () => {
             />
             <Flex justifyContent="center">
               <CustomButton
-                width="100%"
-                variant="solid"
-                colorScheme="primary"
                 onClick={handleLogin}
+                isLoading={isLoading}
+                colorScheme="primary"
+                variant="solid"
                 text="Login"
+                width="100%"
                 mt={4}
                 py={4}
               />

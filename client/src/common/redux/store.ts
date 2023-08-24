@@ -9,23 +9,22 @@ import cartReducer from "./reducers/cartSlice";
 import wishlistReducer from "./reducers/wishlistSlice";
 
 //API Endpoints
-// import { authAPI } from "./api/authAPI";
+import { authAPI } from "./api/authAPI";
+import { productAPI } from "./api/productAPI";
 
 const rootReducer = combineReducers({
   user: userReducer,
   cart: cartReducer,
   wishlist: wishlistReducer,
+  [authAPI.reducerPath]: authAPI.reducer,
+  [productAPI.reducerPath]: productAPI.reducer,
 });
 
 export const store = configureStore({
   reducer: persistReducer({ key: "root", storage }, rootReducer),
-  middleware: [thunk],
+  middleware: [thunk, authAPI.middleware, productAPI.middleware],
 });
 export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-//     [authAPI.reducerPath]: authAPI.reducer,
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware().concat(authAPI.middleware),

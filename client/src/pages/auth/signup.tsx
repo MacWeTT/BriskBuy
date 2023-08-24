@@ -1,5 +1,6 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 // Chakra UI
 import {
@@ -24,14 +25,24 @@ import CustomLink from "@/common/components/UI/CustomLink";
 
 //Misc Imports
 import { BsGoogle, BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/common/redux/store";
 
 const SignUp = () => {
+  const { isLoggedIn } = useSelector((state: RootState) => state.user);
+
+  const toast = useToast();
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password2, setPassword2] = useState("");
   const [showPassword2, setShowPassword2] = useState(false);
-  const toast = useToast();
+
+  useEffect(() => {
+    if (isLoggedIn) router.push("/");
+  });
 
   const isPasswordValid = (password: string) => {
     const minLength = 8;
@@ -82,7 +93,7 @@ const SignUp = () => {
   return (
     <>
       <Head>
-        <title>Briskbuy | Login</title>
+        <title>Sign Up | Briskbuy</title>
       </Head>
       <PageWrapper
         display="flex"

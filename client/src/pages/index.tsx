@@ -11,7 +11,7 @@ import PageWrapper from "@/common/components/UI/PageWrapper";
 import CustomText from "@/common/components/UI/CustomText";
 import CustomButton from "@/common/components/UI/CustomButton";
 import HeroCarousel from "@/common/components/UI/Carousel/HeroCarousel";
-import HorizontalCarousel from "@/common/components/UI/Carousel/HorizontalCarousel";
+import LandingCarousel from "@/common/components/UI/Carousel/LandingCarousel";
 
 //Miscellaneous Imports
 import { home } from "@/common/typography/home";
@@ -31,9 +31,10 @@ function Home() {
   return (
     <>
       <Head>
-        <title>Briskbuy | Home</title>
+        <title>Home | Briskbuy</title>
       </Head>
       <PageWrapper>
+        <LandingCarousel />
         <Flex justifyContent="space-evenly" m={8} wrap="wrap">
           <Box maxWidth="45%" ml={4} alignItems="center">
             <CustomText
@@ -124,7 +125,7 @@ function Home() {
             </Flex>
           )}
         </Box> */}
-        <Box mx={8} bgColor="quaternary" p={8}>
+        {/* <Box mx={8} bgColor="quaternary" p={8}>
           {products && (
             <Flex justifyContent="space-around" flexWrap="wrap">
               <HorizontalCarousel
@@ -134,7 +135,7 @@ function Home() {
               />
             </Flex>
           )}
-        </Box>
+        </Box> */}
       </PageWrapper>
     </>
   );
