@@ -71,7 +71,10 @@ const Cart = () => {
               variant="subheading"
               text={`Items : ${cartItems.length}`}
             />
-            <CustomText variant="subheading" text={`Price : $${total}`} />
+            <CustomText
+              variant="subheading"
+              text={`Price : ₹${total.toLocaleString("en-IN")}`}
+            />
             <CustomButton
               icon={<BiSolidChevronRight />}
               variant="solid-icon"

@@ -12,6 +12,12 @@ const GuestUser: User = {
 
 const initialState: UserState = {
   user: GuestUser,
+  shipping_address: {
+    street_address: "",
+    city: "",
+    state: "",
+    postal_code: "",
+  },
   access_token: "",
   refresh_token: "",
   isLoggedIn: false,
@@ -22,9 +28,9 @@ const userSlice = createSlice({
   name: "userSlice",
   reducers: {
     setUser: (state, action) => {
-      state.access_token = action.payload.access;
-      state.refresh_token = action.payload.refresh;
       state.user = action.payload.user;
+      state.shipping_address = state.access_token = action.payload.access;
+      state.refresh_token = action.payload.refresh;
       state.isLoggedIn = true;
     },
     logout: () => initialState,
