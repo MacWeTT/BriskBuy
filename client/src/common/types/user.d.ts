@@ -10,6 +10,7 @@ export interface UserState {
 }
 
 export interface ShippingAddress {
+  id: number;
   street_address: string;
   city: string;
   state: string;

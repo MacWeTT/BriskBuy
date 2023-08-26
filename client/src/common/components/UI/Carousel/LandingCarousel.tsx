@@ -33,15 +33,15 @@ const LandingCarousel = () => {
     );
   };
 
-  // const handleAutoSlide = () => {
-  //   handleNext();
-  // };
+  const handleAutoSlide = () => {
+    handleNext();
+  };
 
-  // useEffect(() => {
-  //   const interval = setInterval(handleAutoSlide, slideInterval);
-  //   return () => clearInterval(interval);
-  //   // eslint-disable-next-line
-  // }, []);
+  useEffect(() => {
+    const interval = setInterval(handleAutoSlide, slideInterval);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Box

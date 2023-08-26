@@ -25,12 +25,7 @@ import CustomButton from "./UI/CustomButton";
 import CategoryNav from "./CategoryNav";
 
 //React-Icons
-import {
-  BiCurrentLocation,
-  BiShoppingBag,
-  BiChevronDown,
-  BiHeart,
-} from "react-icons/bi";
+import { BiShoppingBag, BiChevronDown, BiHeart } from "react-icons/bi";
 import { BsPerson } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { AiOutlineShoppingCart } from "react-icons/ai";
@@ -66,12 +61,6 @@ const Navbar = () => {
       >
         <Flex justifyContent="center" alignItems="center" gap={6}>
           <CustomLink link="BriskBuy" url="/" mr={4} />
-          <Link href="/profile">
-            <Flex justifyContent="center" alignItems="center">
-              <BiCurrentLocation />
-              <CustomText variant="paragraph" text="Lucknow" px="1" />
-            </Flex>
-          </Link>
         </Flex>
         <Box>
           <InputGroup>
