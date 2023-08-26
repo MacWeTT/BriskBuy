@@ -11,7 +11,7 @@ import PageWrapper from "@/common/components/UI/PageWrapper";
 import CustomText from "@/common/components/UI/CustomText";
 import CustomButton from "@/common/components/UI/CustomButton";
 import HeroCarousel from "@/common/components/UI/Carousel/HeroCarousel";
-import HorizontalCarousel from "@/common/components/UI/Carousel/HorizontalCarousel";
+import LandingCarousel from "@/common/components/UI/Carousel/LandingCarousel";
 
 //Miscellaneous Imports
 import { home } from "@/common/typography/home";
@@ -31,9 +31,10 @@ function Home() {
   return (
     <>
       <Head>
-        <title>Briskbuy | Home</title>
+        <title>Home | Briskbuy</title>
       </Head>
       <PageWrapper>
+        <LandingCarousel />
         <Flex justifyContent="space-evenly" m={8} wrap="wrap">
           <Box maxWidth="45%" ml={4} alignItems="center">
             <CustomText
@@ -47,8 +48,8 @@ function Home() {
               text={home.subHeading}
               fontSize="3xl"
               marginTop="20px"
-              fontWeight="medium"
               lineHeight="40px"
+              fontWeight="medium"
             />
             <Flex my={6} gap={6}>
               <CustomButton variant="solid" text="Shop Now" w="max-content" />
@@ -81,60 +82,6 @@ function Home() {
             )}
           </Flex>
         </Flex>
-        {/* <Box mx={8} bgColor="quaternary" p={8}>
-          {products && (
-            <Flex justifyContent="space-around" flexWrap="wrap">
-              {products?.map((product) => (
-                <Box key={product.id}>
-                  <Card maxW="sm" my={8}>
-                    <CardBody>
-                      <Image
-                        src={`${backendURL}${product.image}`}
-                        alt={product.image}
-                        width="200px"
-                        height="200px"
-                        borderRadius="lg"
-                      />
-                      <Stack mt="6" spacing="3" textOverflow="ellipsis">
-                        <CustomText
-                          variant="heading"
-                          lineHeight="10px"
-                          fontSize="xl"
-                          text={product.name}
-                        />
-                        <CustomText
-                          variant="subheading"
-                          textAlign="right"
-                          color="blue.600"
-                          fontSize="lg"
-                          text={`₹${product.price.toLocaleString("en-IN")}`}
-                        />
-                      </Stack>
-                    </CardBody>
-                    <Divider />
-                    <CardFooter display="flex" justifyContent="center">
-                      <ButtonGroup spacing="2">
-                        <CustomButton variant="solid" text="Add To cart" />
-                        <CustomButton variant="border" text="Wishlist" />
-                      </ButtonGroup>
-                    </CardFooter>
-                  </Card>
-                </Box>
-              ))}
-            </Flex>
-          )}
-        </Box> */}
-        <Box mx={8} bgColor="quaternary" p={8}>
-          {products && (
-            <Flex justifyContent="space-around" flexWrap="wrap">
-              <HorizontalCarousel
-                products={products}
-                hasMore={hasMore}
-                setPage={setPage}
-              />
-            </Flex>
-          )}
-        </Box>
       </PageWrapper>
     </>
   );

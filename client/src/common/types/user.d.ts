@@ -3,9 +3,18 @@
 
 export interface UserState {
   user: User;
+  shipping_address: ShippingAddress;
   access_token: string;
   refresh_token: string;
   isLoggedIn: boolean;
+}
+
+export interface ShippingAddress {
+  id: number;
+  street_address: string;
+  city: string;
+  state: string;
+  postal_code: string;
 }
 
 export interface User {

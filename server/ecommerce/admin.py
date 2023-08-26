@@ -4,11 +4,6 @@ from . import models
 # Register your models here.
 
 
-@admin.register(models.Customer)
-class CustomerAdmin(admin.ModelAdmin):
-    list_display = ["name", "email"]
-
-
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ["name", "slug"]
@@ -31,14 +26,4 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_display = ["product", "order", "quantity", "date_added"]
 
 
-@admin.register(models.ShippingAddress)
-class ShippingAddressAdmin(admin.ModelAdmin):
-    list_display = [
-        "customer",
-        "order",
-        "street_address",
-        "city",
-        "state",
-        "postal_code",
-        "date_added",
-    ]
+admin.site.register(models.ShippingAddress)

@@ -1,28 +1,46 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+
+//Redux
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/common/redux/store";
+import { logout } from "../redux/reducers/userSlice";
 
 //UI Components
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverBody,
+  Portal,
+} from "@chakra-ui/react";
 import { Flex, Box, Input } from "@chakra-ui/react";
 import { InputGroup, InputRightElement } from "@chakra-ui/react";
 import CustomText from "./UI/CustomText";
 import CustomLink from "./UI/CustomLink";
+import CustomButton from "./UI/CustomButton";
 import CategoryNav from "./CategoryNav";
 
 //React-Icons
-import { BiCurrentLocation, BiBookmark, BiShoppingBag } from "react-icons/bi";
-import { AiOutlineShoppingCart } from "react-icons/ai";
+import { BiShoppingBag, BiChevronDown, BiHeart } from "react-icons/bi";
+import { BsPerson } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
+import { AiOutlineShoppingCart } from "react-icons/ai";
 
 const Navbar = () => {
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user, isLoggedIn } = useSelector((state: RootState) => state.user);
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const { wishlistItems } = useSelector((state: RootState) => state.wishlist);
 
-  const [searchInput, setSearchInput] = useState("");
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const userRef = useRef<HTMLDivElement | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+
   const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     console.log(searchInput);
@@ -43,12 +61,6 @@ const Navbar = () => {
       >
         <Flex justifyContent="center" alignItems="center" gap={6}>
           <CustomLink link="BriskBuy" url="/" mr={4} />
-          <Link href="/profile">
-            <Flex justifyContent="center" alignItems="center">
-              <BiCurrentLocation />
-              <CustomText variant="paragraph" text="Lucknow" px="1" />
-            </Flex>
-          </Link>
         </Flex>
         <Box>
           <InputGroup>
@@ -78,22 +90,81 @@ const Navbar = () => {
           </InputGroup>
         </Box>
         <Flex justifyContent="center" alignItems="center">
-          <CustomLink url="/user/profile" link={user.first_name} />
-          <Link href="/user/orders">
-            <Flex
-              position="relative"
-              justifyContent="center"
-              alignItems="center"
-              fontSize="32"
-              px="1"
-              ml="2"
-              _hover={{
-                transform: "scale(1.1)",
-              }}
-            >
-              <BiShoppingBag />
-            </Flex>
-          </Link>
+          <Popover trigger="hover" placement="bottom" isLazy>
+            <PopoverTrigger>
+              <Flex justifyContent="center" alignItems="center" ref={userRef}>
+                <CustomText variant="paragraph" text={user.first_name} />
+                <Flex fontSize="24">
+                  <BiChevronDown />
+                </Flex>
+              </Flex>
+            </PopoverTrigger>
+            <Portal>
+              <PopoverContent width="max-content">
+                <PopoverArrow />
+                <PopoverHeader textAlign="center">Your Account</PopoverHeader>
+                {isLoggedIn ? (
+                  <PopoverBody>
+                    <Link href="/user/profile">
+                      <Flex
+                        position="relative"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        fontSize="28"
+                        my={2}
+                      >
+                        <BsPerson />
+                        <CustomText
+                          variant="paragraph"
+                          text="Your Profile"
+                          px="1"
+                        />
+                      </Flex>
+                    </Link>
+                    <Link href="/user/orders">
+                      <Flex
+                        position="relative"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        fontSize="28"
+                        my={2}
+                      >
+                        <BiShoppingBag />
+                        <CustomText
+                          variant="paragraph"
+                          text="Your Orders"
+                          px="1"
+                        />
+                      </Flex>
+                    </Link>
+                    <CustomButton
+                      variant="solid"
+                      text="Logout"
+                      onClick={() => {
+                        setTimeout(() => {
+                          dispatch(logout());
+                          router.reload();
+                        }, 1000);
+                      }}
+                      width="100%"
+                      mt={4}
+                    />
+                  </PopoverBody>
+                ) : (
+                  <PopoverBody>
+                    <CustomButton
+                      variant="solid"
+                      text="Login"
+                      route="/auth/login"
+                      width="100%"
+                      mt={4}
+                      mb={2}
+                    />
+                  </PopoverBody>
+                )}
+              </PopoverContent>
+            </Portal>
+          </Popover>
           <Link href="/user/cart">
             <Flex
               position="relative"
@@ -138,7 +209,7 @@ const Navbar = () => {
                 transform: "scale(1.1)",
               }}
             >
-              <BiBookmark />
+              <BiHeart />
               <Flex
                 display={wishlistItems.length > 0 ? "flex" : "none"}
                 borderRadius="9999px"

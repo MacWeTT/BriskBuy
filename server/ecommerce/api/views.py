@@ -2,8 +2,13 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from ..serializers import ProductSerializer, CategorySerializer, OrderSerializer
-from ..models import Product, Category, Order, Customer
+from ..serializers import (
+    ProductSerializer,
+    CategorySerializer,
+    OrderSerializer,
+    ShippingAddressSerializer,
+)
+from ..models import Product, Category, Order, ShippingAddress
 from django.db.models import Q
 from django.utils.text import slugify
 
@@ -76,4 +81,11 @@ class OrderView(APIView):
             order = []
 
         serializer = OrderSerializer(order, many=True)
+        return Response(serializer.data)
+
+
+class ShippingAddressView(APIView):
+    def get(self, request, pk):
+        shipping_address = ShippingAddress.objects.filter(customer=pk)
+        serializer = ShippingAddressSerializer(shipping_address, many=True)
         return Response(serializer.data)

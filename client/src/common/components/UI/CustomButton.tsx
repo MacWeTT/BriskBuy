@@ -86,13 +86,33 @@ const CustomButton = ({
           onClick={route ? handleButtonRouting : onClick}
           {...props}
         >
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" alignItems="center">
             {icon}
             <Text ml={2}>{text}</Text>
           </Flex>
         </Button>
       );
-      break;
+    case "solid-icon":
+      return (
+        <Button
+          bgColor="primary"
+          color="quaternary"
+          size="md"
+          _hover={{ bgColor: "tertiary" }}
+          _focus={{ boxShadow: "none" }}
+          _active={{
+            bg: "tertiary",
+            transform: "scale(0.98)",
+          }}
+          onClick={route ? handleButtonRouting : onClick}
+          {...props}
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text mr={2}>{text}</Text>
+            {icon}
+          </Flex>
+        </Button>
+      );
     default:
       break;
   }
