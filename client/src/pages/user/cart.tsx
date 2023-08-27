@@ -116,7 +116,7 @@ const Cart = () => {
                             </Card>
                           </Th>
                           <Td>{item.name}</Td>
-                          <Td>{item.price}</Td>
+                          <Td>{`₹${item.price.toLocaleString("en-IN")}`}</Td>
                           <Td>
                             <Flex justifyContent="space-around">
                               <Text alignSelf="center">{item.quantity}</Text>
@@ -141,7 +141,9 @@ const Cart = () => {
                               </Flex>
                             </Flex>
                           </Td>
-                          <Td>{item.quantity * item.price}</Td>
+                          <Td>{`₹${(item.quantity * item.price).toLocaleString(
+                            "en-IN"
+                          )}`}</Td>
                         </Tr>
                       );
                     })}

@@ -1,35 +1,47 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Credentials } from "@/common/types/user";
+import {
+  LoginCredentials,
+  RegisterCredentials,
+  UserState,
+} from "@/common/types/user";
 
 const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 export const authAPI = createApi({
   reducerPath: "authAPI",
   baseQuery: fetchBaseQuery({
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as UserState).access_token;
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
     baseUrl: `${BASEURL}/api/users/auth/`,
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation({
-      query: (credentials: Credentials) => ({
+      query: (credentials: LoginCredentials) => ({
         url: "login/",
         method: "POST",
         body: credentials,
       }),
     }),
     registerUser: builder.mutation({
-      query(data: any) {
+      query(credentials: RegisterCredentials) {
         return {
           url: "register/",
           method: "POST",
-          body: data,
+          body: credentials,
         };
       },
     }),
-    logoutUser: builder.mutation<void, void>({
-      query() {
+    refreshUser: builder.mutation({
+      query(refresh: string) {
         return {
-          url: "logout",
-          credentials: "include",
+          url: "token/refresh/",
+          method: "POST",
+          body: refresh,
         };
       },
     }),
@@ -39,5 +51,5 @@ export const authAPI = createApi({
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
-  useLogoutUserMutation,
+  useRefreshUserMutation,
 } = authAPI;
