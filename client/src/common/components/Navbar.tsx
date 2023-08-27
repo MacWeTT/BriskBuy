@@ -54,22 +54,21 @@ const Navbar = () => {
       <Flex
         as="nav"
         position="sticky"
-        justify="space-between"
+        justify="center"
         p={5}
         bgColor="primary"
         color="quaternary"
       >
-        <Flex justifyContent="center" alignItems="center" gap={6}>
-          <CustomLink link="BriskBuy" url="/" mr={4} />
-        </Flex>
-        <Box>
-          <InputGroup>
+        <Flex justify="space-between" width="4xl">
+          <Flex justifyContent="center" alignItems="center" gap={6}>
+            <CustomLink link="BriskBuy" url="/" mr={4} />
+          </Flex>
+          <InputGroup mx={6}>
             <Input
               type="text"
               placeholder="Search for products..."
               bg="white"
               fontSize="lg"
-              width="500px"
               color="secondary"
               ml={2}
               onChange={handleSearchInput}
@@ -88,147 +87,147 @@ const Navbar = () => {
               </Box>
             </InputRightElement>
           </InputGroup>
-        </Box>
-        <Flex justifyContent="center" alignItems="center">
-          <Popover trigger="hover" placement="bottom" isLazy>
-            <PopoverTrigger>
-              <Flex justifyContent="center" alignItems="center" ref={userRef}>
-                <CustomText variant="paragraph" text={user.first_name} />
-                <Flex fontSize="24">
-                  <BiChevronDown />
+          <Flex justifyContent="center" alignItems="center">
+            <Popover trigger="hover" placement="bottom" isLazy>
+              <PopoverTrigger>
+                <Flex justifyContent="center" alignItems="center" ref={userRef}>
+                  <CustomText variant="paragraph" text={user.first_name} />
+                  <Flex fontSize="24">
+                    <BiChevronDown />
+                  </Flex>
+                </Flex>
+              </PopoverTrigger>
+              <Portal>
+                <PopoverContent width="max-content">
+                  <PopoverArrow />
+                  <PopoverHeader textAlign="center">Your Account</PopoverHeader>
+                  {isLoggedIn ? (
+                    <PopoverBody>
+                      <Link href="/user/profile">
+                        <Flex
+                          position="relative"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          fontSize="28"
+                          my={2}
+                        >
+                          <BsPerson />
+                          <CustomText
+                            variant="paragraph"
+                            text="Your Profile"
+                            px="1"
+                          />
+                        </Flex>
+                      </Link>
+                      <Link href="/user/orders">
+                        <Flex
+                          position="relative"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          fontSize="28"
+                          my={2}
+                        >
+                          <BiShoppingBag />
+                          <CustomText
+                            variant="paragraph"
+                            text="Your Orders"
+                            px="1"
+                          />
+                        </Flex>
+                      </Link>
+                      <CustomButton
+                        variant="solid"
+                        text="Logout"
+                        onClick={() => {
+                          setTimeout(() => {
+                            dispatch(logout());
+                            router.reload();
+                          }, 1000);
+                        }}
+                        width="100%"
+                        mt={4}
+                      />
+                    </PopoverBody>
+                  ) : (
+                    <PopoverBody>
+                      <CustomButton
+                        variant="solid"
+                        text="Login"
+                        route="/auth/login"
+                        width="100%"
+                        mt={4}
+                        mb={2}
+                      />
+                    </PopoverBody>
+                  )}
+                </PopoverContent>
+              </Portal>
+            </Popover>
+            <Link href="/user/cart">
+              <Flex
+                position="relative"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="32"
+                px="1"
+                mx="2"
+                _hover={{
+                  transform: "scale(1.1)",
+                }}
+              >
+                <AiOutlineShoppingCart />
+                <Flex
+                  display={cartItems.length > 0 ? "flex" : "none"}
+                  borderRadius="9999px"
+                  bgColor="tertiary"
+                  color="black"
+                  position="absolute"
+                  right="-5px"
+                  top="-5px"
+                  p="1"
+                  fontSize="12"
+                  w="20px"
+                  h="20px"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {cartItems.length}
                 </Flex>
               </Flex>
-            </PopoverTrigger>
-            <Portal>
-              <PopoverContent width="max-content">
-                <PopoverArrow />
-                <PopoverHeader textAlign="center">Your Account</PopoverHeader>
-                {isLoggedIn ? (
-                  <PopoverBody>
-                    <Link href="/user/profile">
-                      <Flex
-                        position="relative"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        fontSize="28"
-                        my={2}
-                      >
-                        <BsPerson />
-                        <CustomText
-                          variant="paragraph"
-                          text="Your Profile"
-                          px="1"
-                        />
-                      </Flex>
-                    </Link>
-                    <Link href="/user/orders">
-                      <Flex
-                        position="relative"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        fontSize="28"
-                        my={2}
-                      >
-                        <BiShoppingBag />
-                        <CustomText
-                          variant="paragraph"
-                          text="Your Orders"
-                          px="1"
-                        />
-                      </Flex>
-                    </Link>
-                    <CustomButton
-                      variant="solid"
-                      text="Logout"
-                      onClick={() => {
-                        setTimeout(() => {
-                          dispatch(logout());
-                          router.reload();
-                        }, 1000);
-                      }}
-                      width="100%"
-                      mt={4}
-                    />
-                  </PopoverBody>
-                ) : (
-                  <PopoverBody>
-                    <CustomButton
-                      variant="solid"
-                      text="Login"
-                      route="/auth/login"
-                      width="100%"
-                      mt={4}
-                      mb={2}
-                    />
-                  </PopoverBody>
-                )}
-              </PopoverContent>
-            </Portal>
-          </Popover>
-          <Link href="/user/cart">
-            <Flex
-              position="relative"
-              justifyContent="center"
-              alignItems="center"
-              fontSize="32"
-              px="1"
-              mx="2"
-              _hover={{
-                transform: "scale(1.1)",
-              }}
-            >
-              <AiOutlineShoppingCart />
+            </Link>
+            <Link href="/user/wishlist">
               <Flex
-                display={cartItems.length > 0 ? "flex" : "none"}
-                borderRadius="9999px"
-                bgColor="tertiary"
-                color="black"
-                position="absolute"
-                right="-5px"
-                top="-5px"
-                p="1"
-                fontSize="12"
-                w="20px"
-                h="20px"
-                alignItems="center"
+                position="relative"
                 justifyContent="center"
-              >
-                {cartItems.length}
-              </Flex>
-            </Flex>
-          </Link>
-          <Link href="/user/wishlist">
-            <Flex
-              position="relative"
-              justifyContent="center"
-              alignItems="center"
-              fontSize="32"
-              px="1"
-              mx="2"
-              _hover={{
-                transform: "scale(1.1)",
-              }}
-            >
-              <BiHeart />
-              <Flex
-                display={wishlistItems.length > 0 ? "flex" : "none"}
-                borderRadius="9999px"
-                bgColor="tertiary"
-                color="black"
-                position="absolute"
-                right="-5px"
-                top="-5px"
-                p="1"
-                fontSize="12"
-                w="20px"
-                h="20px"
                 alignItems="center"
-                justifyContent="center"
+                fontSize="32"
+                px="1"
+                mx="2"
+                _hover={{
+                  transform: "scale(1.1)",
+                }}
               >
-                {wishlistItems.length}
+                <BiHeart />
+                <Flex
+                  display={wishlistItems.length > 0 ? "flex" : "none"}
+                  borderRadius="9999px"
+                  bgColor="tertiary"
+                  color="black"
+                  position="absolute"
+                  right="-5px"
+                  top="-5px"
+                  p="1"
+                  fontSize="12"
+                  w="20px"
+                  h="20px"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {wishlistItems.length}
+                </Flex>
               </Flex>
-            </Flex>
-          </Link>
+            </Link>
+          </Flex>
         </Flex>
       </Flex>
       <CategoryNav />

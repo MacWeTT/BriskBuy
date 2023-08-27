@@ -30,7 +30,14 @@ export interface GenericResponse {
   message: string;
 }
 
-export interface Credentials {
+export interface LoginCredentials {
   email: string;
   password: string;
+}
+
+export interface RegisterCredentials {
+  username: string;
+  email: string;
+  password: string;
+  password2: string;
 }

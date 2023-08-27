@@ -1,10 +1,11 @@
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import GoogleLogin, GoogleConnect, GitHubLogin, GithubConnect
 from dj_rest_auth.registration.views import (
     SocialAccountListView,
     SocialAccountDisconnectView,
 )
+
+# from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     # SIMPLE_JWT

@@ -18,7 +18,6 @@ const CustomLink = ({ link, url, ...props }: CustomLinkProps) => {
           textDecoration: "underline",
           color: "tertiary",
         }}
-        textDecoration="underline"
       >
         {link}
       </Box>

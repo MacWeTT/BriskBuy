@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "@/common/redux/reducers/cartSlice";
+import { addItemToWishlist } from "@/common/redux/reducers/wishlistSlice";
 import { RootState } from "@/common/redux/store";
 
 //UI Components
@@ -65,10 +66,15 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const [alreadyInCart, setAlreadyInCart] = useState(false);
 
+  const { wishlistItems } = useSelector((state: RootState) => state.wishlist);
+  const [alreadyInWishlist, setAlreadyInWishlist] = useState(false);
+
   useEffect(() => {
     if (cartItems.find((item) => item.id === product.id))
       setAlreadyInCart(true);
-  }, [cartItems, product]);
+    if (wishlistItems.find((item) => item.id === product.id))
+      setAlreadyInWishlist(true);
+  }, [cartItems, wishlistItems, product]);
 
   if (router.isFallback) {
     return <div>Loading...</div>;
@@ -130,7 +136,31 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
                   });
                 }}
               />
-              <CustomButton variant="border" text="Add to wishlist" />
+              <CustomButton
+                variant="border"
+                text={
+                  alreadyInWishlist ? "Added To Wishlist" : "Add to Wishlist"
+                }
+                onClick={() => {
+                  if (alreadyInWishlist) {
+                    toast({
+                      position: "top",
+                      status: "info",
+                      title: "Item already added to wishlist.",
+                      duration: 900,
+                    });
+                    return;
+                  }
+                  dispatch(addItemToWishlist(product));
+                  setAlreadyInWishlist(true);
+                  toast({
+                    position: "top",
+                    status: "success",
+                    title: "Item added to wishlist !",
+                    duration: 900,
+                  });
+                }}
+              />
             </Flex>
             <Divider />
             <CustomText variant="subheading" text="Description" my={2} />
