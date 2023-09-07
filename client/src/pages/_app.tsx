@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 // Next
 import { useRouter } from "next/router";
@@ -17,19 +18,23 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const AuthRoute = router.pathname.startsWith("/auth");
 
+  const googleClientID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
+
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        {AuthRoute ? (
-          <BlankLayout>
-            <Component {...pageProps} />
-          </BlankLayout>
-        ) : (
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        )}
-      </PersistGate>
+      <GoogleOAuthProvider clientId={googleClientID}>
+        <PersistGate loading={null} persistor={persistor}>
+          {AuthRoute ? (
+            <BlankLayout>
+              <Component {...pageProps} />
+            </BlankLayout>
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+        </PersistGate>
+      </GoogleOAuthProvider>
     </Provider>
   );
 }
