@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useSession, signOut } from "next-auth/react";
+
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/common/redux/store";
@@ -227,6 +229,11 @@ const Navbar = () => {
                 </Flex>
               </Flex>
             </Link>
+            <CustomButton
+              variant="solid"
+              text="Logout"
+              onClick={() => signOut()}
+            />
           </Flex>
         </Flex>
       </Flex>

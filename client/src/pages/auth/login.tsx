@@ -2,6 +2,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
+import { useSession, signIn } from "next-auth/react";
+
+//Redux
 import { useDispatch, useSelector } from "react-redux";
 import { useLoginUserMutation } from "@/common/redux/api/authAPI";
 import { setUser } from "@/common/redux/reducers/userSlice";
@@ -34,8 +37,9 @@ import { BsGoogle, BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 const Login = () => {
   //Check if user is already logged in
   const { isLoggedIn } = useSelector((state: RootState) => state.user);
+  const { data: session } = useSession();
   useEffect(() => {
-    if (isLoggedIn) router.push("/");
+    if (session || isLoggedIn) router.push("/");
   });
 
   const router = useRouter();
@@ -191,6 +195,7 @@ const Login = () => {
                   title: "Redirecting to Google..",
                   duration: 1500,
                 });
+                signIn("google");
               }}
             />
             <CustomLink
