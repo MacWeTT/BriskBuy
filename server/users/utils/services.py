@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -25,7 +26,7 @@ def googleValidateIDToken(*, idToken: str) -> bool:
     return True
 
 
-def googleObtainAccessToken(*, code: str, redirectUri: str) -> str:
+def googleObtainToken(*, code: str, redirectUri: str) -> str:
     data = {
         "code": code,
         "client_id": settings.GOOGLE_OAUTH2_CLIENT_ID,
@@ -33,9 +34,7 @@ def googleObtainAccessToken(*, code: str, redirectUri: str) -> str:
         "redirect_uri": redirectUri,
         "grant_type": "authorization_code",
     }
-    print(data)
     response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
-    print(response)
 
     if not response.ok:
         raise ValidationError("Failed to obtain access token from Google.")
@@ -46,35 +45,42 @@ def googleObtainAccessToken(*, code: str, redirectUri: str) -> str:
 
 def googleObtainUserInfo(*, accessToken: str) -> dict:
     response = requests.get(GOOGLE_USER_INFO_URL, params={"access_token": accessToken})
-    print(response)
 
     if not response.ok:
         raise ValidationError("Invalid Google Access Token")
 
-    return response.json()
+    userInfo: dict = response.json()
+    return userInfo
 
 
-def jwtLogin():
+def jwtLogin(user) -> dict:
+    refresh = RefreshToken.for_user(user)
+    access = refresh.access_token
+
+    # Custom Claims
+    access["name"] = str(user.first_name + " " + user.last_name)
+    access["email"] = user.email
+    access["isVerified"] = user.verified
+
+    tokens = {"refresh": str(refresh), "access": str(access)}
+    return tokens
+
+
+def jwtSignUp():
     pass
 
 
-def getFirstMatchingAttr(obj, *attrs, default=None):
-    for attr in attrs:
-        if hasattr(obj, attr):
-            return getattr(obj, attr)
-
-    return default
-
-
-def getErrorMessage(exc) -> str:
-    if hasattr(exc, "message_dict"):
-        return exc.message_dict
-    error_msg = getFirstMatchingAttr(exc, "message", "messages")
-
-    if isinstance(error_msg, list):
-        error_msg = ", ".join(error_msg)
-
-    if error_msg is None:
-        error_msg = str(exc)
-
-    return error_msg
+def createGoogleUser(UserInfo: dict) -> User:
+    email = UserInfo["email"]
+    username = email.split("@")[0]
+    verifiedEmail = UserInfo["email_verified"]
+    user, created = User.objects.get_or_create(
+        email=email,
+        defaults={
+            "username": username,
+            "first_name": UserInfo["given_name"],
+            "last_name": UserInfo["family_name"],
+            "verified": verifiedEmail,
+        },
+    )
+    return user

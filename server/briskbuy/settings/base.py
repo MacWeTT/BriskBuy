@@ -7,13 +7,9 @@ import os
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 SECRET_KEY = os.environ.get("SECRET_KEY")
-
 DEBUG = os.environ.get("DEBUG")
-
 ALLOWED_HOSTS = ["*"]
-
 SITE_ID = 1
 
 # Application definition

@@ -106,10 +106,7 @@ const Login = () => {
       console.log(codeResponse);
       axios({
         method: "POST",
-        url: `${backendURL}/users/google/init`,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        url: `${backendURL}/users/google/login`,
         data: {
           code: codeResponse,
         },

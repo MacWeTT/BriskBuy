@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import GoogleInit
+from .views import GoogleLoginView, GoogleSignUpUserView
 
 urlpatterns = [
     # SIMPLE_JWT
@@ -8,7 +8,8 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]
 
-# SOCIALS
+# Google Auth
 urlpatterns += [
-    path("google/init", GoogleInit.as_view(), name="google_init"),
+    path("google/login", GoogleLoginView.as_view(), name="google_login"),
+    path("google/signup", GoogleSignUpUserView.as_view(), name="google_signup"),
 ]
