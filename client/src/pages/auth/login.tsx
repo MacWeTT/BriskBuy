@@ -98,7 +98,7 @@ const Login = () => {
     }
   };
 
-  const backendURL = process.env.NEXT_PUBLIC_API_URL!;
+  const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
   const handleGoogleLogin = useGoogleLogin({
     flow: "auth-code",
@@ -106,12 +106,12 @@ const Login = () => {
       console.log(codeResponse);
       axios({
         method: "POST",
-        url: `${backendURL}/users/auth/google/`,
+        url: `${backendURL}/users/google/init`,
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
         data: {
-          Code: codeResponse,
+          code: codeResponse,
         },
       })
         .then((response) => {
