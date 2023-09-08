@@ -2,10 +2,15 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
+//Redux
 import { useDispatch, useSelector } from "react-redux";
 import { useLoginUserMutation } from "@/common/redux/api/authAPI";
 import { setUser } from "@/common/redux/reducers/userSlice";
 import { RootState } from "@/common/redux/store";
+
+//GoogleLogin
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 // Chakra UI
 import {
@@ -92,6 +97,32 @@ const Login = () => {
       }
     }
   };
+
+  const backendURL = process.env.NEXT_PUBLIC_API_URL!;
+
+  const handleGoogleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async (codeResponse) => {
+      console.log(codeResponse);
+      axios({
+        method: "POST",
+        url: `${backendURL}/users/auth/google/`,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: {
+          Code: codeResponse,
+        },
+      })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    onError: (errorResponse) => console.log(errorResponse),
+  });
 
   return (
     <>
@@ -191,6 +222,7 @@ const Login = () => {
                   title: "Redirecting to Google..",
                   duration: 1500,
                 });
+                handleGoogleLogin();
               }}
             />
             <CustomLink
@@ -207,3 +239,30 @@ const Login = () => {
 };
 
 export default Login;
+
+// const handleGoogleLogin = useGoogleLogin({
+//   flow: "auth-code",
+//   onSuccess: async (codeResponse) => {
+//     console.log("Authorization Code:", codeResponse.code);
+
+//     try {
+//       const formData = new URLSearchParams();
+//       formData.append("code", codeResponse.code);
+//       const response = await axios.post(
+//         `${backendURL}/users/auth/google/`,
+//         formData.toString(),
+//         {
+//           headers: {
+//             "Content-Type": "application/x-www-form-urlencoded",
+//           },
+//         }
+//       );
+
+//       console.log("Backend Response:", response.data);
+//     } catch (error) {
+//       console.error("Backend Error:", error);
+//     }
+//   },
+//   onError: (errorResponse) =>
+//     console.log("Google Login Error:", errorResponse),
+// });
