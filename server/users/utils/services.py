@@ -1,4 +1,5 @@
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -35,6 +36,7 @@ def googleObtainToken(*, code: str, redirectUri: str) -> str:
         "grant_type": "authorization_code",
     }
     response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
+    print(response)
 
     if not response.ok:
         raise ValidationError("Failed to obtain access token from Google.")
@@ -54,16 +56,28 @@ def googleObtainUserInfo(*, accessToken: str) -> dict:
 
 
 def jwtLogin(user) -> dict:
-    refresh = RefreshToken.for_user(user)
-    access = refresh.access_token
+    tokenURL = f"{settings.LOCAL_URL}/api/token/"
+    # refresh = RefreshToken.for_user(user)
+    # access = refresh.access_token
 
-    # Custom Claims
-    access["name"] = str(user.first_name + " " + user.last_name)
-    access["email"] = user.email
-    access["isVerified"] = user.verified
+    # # Custom Claims
+    # access["name"] = str(user.first_name + " " + user.last_name)
+    # access["email"] = user.email
+    # access["isVerified"] = user.verified
 
-    tokens = {"refresh": str(refresh), "access": str(access)}
-    return tokens
+    # tokens = {"refresh": str(refresh), "access": str(access)}
+    # return tokens
+
+
+# def jwtRefresh(tokens) -> dict:
+#     refresh = tokens["refresh"]
+#     access = tokens["access"]
+
+#     refresh = RefreshToken(refresh)
+#     access = refresh.access_token
+
+#     tokens = {"refresh": str(refresh), "access": str(access)}
+#     return tokens
 
 
 def jwtSignUp():

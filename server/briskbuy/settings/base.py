@@ -8,9 +8,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
+LOCAL_URL = os.environ.get("LOCAL_URL")
 DEBUG = os.environ.get("DEBUG")
 ALLOWED_HOSTS = ["*"]
-SITE_ID = 1
 
 # Application definition
 INSTALLED_APPS = [
@@ -21,7 +21,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
 ]
 
 PROJECT_APPS = [
@@ -57,8 +56,9 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
     "BLACKLIST_AFTER_ROTATION": True,
+    "ROTATE_REFRESH_TOKENS": True,
     "UPDATE_LAST_LOGIN": True,
     "SIGNING_KEY": os.environ.get("SECRET_KEY"),
 }

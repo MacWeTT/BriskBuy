@@ -103,7 +103,6 @@ const Login = () => {
   const handleGoogleLogin = useGoogleLogin({
     flow: "auth-code",
     onSuccess: async (codeResponse) => {
-      console.log(codeResponse);
       axios({
         method: "POST",
         url: `${backendURL}/users/google/login`,
@@ -112,7 +111,7 @@ const Login = () => {
         },
       })
         .then((response) => {
-          console.log(response);
+          console.log(response.data);
         })
         .catch((error) => {
           console.log(error);

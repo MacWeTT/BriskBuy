@@ -56,6 +56,45 @@ class GoogleSignUpUserView(APIView):
         return Response(data, status=200)
 
 
+class LoginUser(APIView):
+    def post(self, request):
+        username = request.data.username
+        password = request.data.password
+
+        user = User.objects.filter(username=username).first()
+
+        if not user:
+            raise ValidationError("Invalid credentials.")
+
+        if not user.check_password(password):
+            raise ValidationError("Invalid password.")
+        else:
+            tokens = jwtLogin(user=user)
+
+        return Response(tokens, status=200)
+
+
+class SignUpUser(APIView):
+    def post(self, request):
+        data = request.data
+        user = User.objects.filter(email=data["email"]).first()
+
+        if user:
+            raise ValidationError("User already exists.")
+        else:
+            user = User.objects.create(
+                username=data["username"],
+                email=data["email"],
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+            )
+            user.set_password(data["password"])
+            user.save()
+            
+        tokens = jwtLogin(user=user)
+        return Response(tokens, status=201)
+
+
 # class GetUserView(APIView):
 #     def get(self, request):
 #         user = request.headers.get("Authorization")
