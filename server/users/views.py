@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from .utils.services import googleObtainToken, googleObtainUserInfo, createGoogleUser
-from .utils.services import jwtLogin, jwtSignUp
+from rest_framework.generics import CreateAPIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .utils.serlializers import TokenObtainPairSerializer, UserRegistrationSerializer
+from .utils.services import jwtLogin, verifyGoogleUser
 from django.contrib.auth import get_user_model
 
 # from .utils.mixins import PublicApiMixin, ApiErrorsMixin
@@ -10,95 +12,31 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class GoogleLoginView(APIView):
-    redirectUri = "http://localhost:3000"
-
+class GoogleLoginAndSignupView(APIView):
     def post(self, request):
         data = request.data
         codeObj = data["code"]
-        code = codeObj["code"]
-        AccessToken = googleObtainToken(code=code, redirectUri=self.redirectUri)
+        user = verifyGoogleUser(codeObj)
 
-        if AccessToken:
-            googleUser = googleObtainUserInfo(accessToken=AccessToken)
-            user = User.objects.get(email=googleUser["email"])
-            if not user.verified:
-                user.verified = True
-                user.save()
-            if not user:
-                raise ValidationError("User Does Not Exist.")
-
+        if user is not None:
             tokens = jwtLogin(user=user)
-
-        return Response(tokens)
-
-
-class GoogleSignUpUserView(APIView):
-    redirectUri = "http://localhost:3000"
-
-    def post(self, request):
-        codeObj = request.data["code"]
-        code = codeObj["code"]
-        print(code)
-        googleUserExists = googleObtainToken(code=code, redirectUri=self.redirectUri)
-
-        user = None
-        if googleUserExists:
-            UserInfo = googleObtainUserInfo(accessToken=googleUserExists)
-            user = createGoogleUser(userInfo=UserInfo)
         else:
-            raise ValidationError("Google User Does Not Exist")
-
-        data = {
-            "User": user,
-        }
-
-        return Response(data, status=200)
-
-
-class LoginUser(APIView):
-    def post(self, request):
-        username = request.data.username
-        password = request.data.password
-
-        user = User.objects.filter(username=username).first()
-
-        if not user:
-            raise ValidationError("Invalid credentials.")
-
-        if not user.check_password(password):
-            raise ValidationError("Invalid password.")
-        else:
-            tokens = jwtLogin(user=user)
+            raise ValidationError("Google user doesn't exist.")
 
         return Response(tokens, status=200)
 
 
-class SignUpUser(APIView):
-    def post(self, request):
-        data = request.data
-        user = User.objects.filter(email=data["email"]).first()
+class LoginUserView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
 
-        if user:
-            raise ValidationError("User already exists.")
+class SignUpUserView(CreateAPIView):
+    serializer_class = UserRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            tokens = jwtLogin(user=user)
+            return Response(tokens, status=201)
         else:
-            user = User.objects.create(
-                username=data["username"],
-                email=data["email"],
-                first_name=data["first_name"],
-                last_name=data["last_name"],
-            )
-            user.set_password(data["password"])
-            user.save()
-            
-        tokens = jwtLogin(user=user)
-        return Response(tokens, status=201)
-
-
-# class GetUserView(APIView):
-#     def get(self, request):
-#         user = request.headers.get("Authorization")
-#         data = {
-#             "User": user,
-#         }
-#         return Response(data, status=200)
+            return Response(serializer.errors, status=400)

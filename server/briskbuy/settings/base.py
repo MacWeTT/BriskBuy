@@ -61,6 +61,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "UPDATE_LAST_LOGIN": True,
     "SIGNING_KEY": os.environ.get("SECRET_KEY"),
+    "TOKEN_OBTAIN_SERIALIZER": "users.utils.serializers.TokenObtainPairSerializer",
 }
 
 AUTH_USER_MODEL = "users.User"
