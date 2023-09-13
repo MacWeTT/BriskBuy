@@ -47,7 +47,7 @@ const Login = () => {
   const toast = useToast();
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -71,7 +71,7 @@ const Login = () => {
       });
     } else {
       try {
-        const response = await login({ email, password }).unwrap();
+        const response = await login({ username, password }).unwrap();
         console.log(response);
         toast({
           position: "top",
@@ -111,8 +111,6 @@ const Login = () => {
         },
       })
         .then((response) => {
-          console.log(response);
-          dispatch(setUser(response.data));
           toast({
             position: "top",
             status: "success",
@@ -121,7 +119,7 @@ const Login = () => {
             duration: 1500,
           });
           setTimeout(() => {
-            dispatch(setUser(response));
+            dispatch(setUser(response.data));
             router.push("/");
           }, 1500);
         })
@@ -165,13 +163,13 @@ const Login = () => {
             maxWidth="600px"
             width="400px"
           >
-            <FormControl id="email" mb={3}>
-              <FormLabel>Email</FormLabel>
+            <FormControl id="username" mb={3}>
+              <FormLabel>Username</FormLabel>
               <Input
-                type="email"
+                type="text"
                 bgColor="white"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </FormControl>
             <FormControl id="password" mb={3}>

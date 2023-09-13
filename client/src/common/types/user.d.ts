@@ -21,8 +21,8 @@ export interface User {
   pk: number;
   username: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  name: string;
+  verified: boolean;
 }
 
 export interface GenericResponse {
@@ -31,7 +31,7 @@ export interface GenericResponse {
 }
 
 export interface LoginCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -40,4 +40,16 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   password2: string;
+}
+
+export interface JWT {
+  token_type: string;
+  exp: number;
+  iat: number;
+  jti: string;
+  user_id: number;
+  username: string;
+  name: string;
+  email: string;
+  isVerified: boolean;
 }

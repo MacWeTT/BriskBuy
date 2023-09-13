@@ -7,7 +7,7 @@ from .utils.serlializers import TokenObtainPairSerializer, UserRegistrationSeria
 from .utils.services import jwtLogin, verifyGoogleUser
 from django.contrib.auth import get_user_model
 
-# from .utils.mixins import PublicApiMixin, ApiErrorsMixin
+#TODO: Add mixins to send errors to the client instead of 500 errors
 
 User = get_user_model()
 

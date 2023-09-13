@@ -17,7 +17,7 @@ export const authAPI = createApi({
       }
       return headers;
     },
-    baseUrl: `${BASEURL}/api/users/auth/`,
+    baseUrl: `${BASEURL}/users/`,
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation({

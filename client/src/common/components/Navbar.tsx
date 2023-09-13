@@ -91,7 +91,7 @@ const Navbar = () => {
             <Popover trigger="hover" placement="bottom" isLazy>
               <PopoverTrigger>
                 <Flex justifyContent="center" alignItems="center" ref={userRef}>
-                  <CustomText variant="paragraph" text={user.first_name} />
+                  <CustomText variant="paragraph" text={user.username} />
                   <Flex fontSize="24">
                     <BiChevronDown />
                   </Flex>
