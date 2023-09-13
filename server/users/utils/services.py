@@ -14,7 +14,7 @@ GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 def verifyGoogleUser(code: dict) -> dict:
     '''
-        Verify the Google User. Send the authorization code to the Google servers and obtain an access token. 
+        Verify the `Google user`. Send the authorization code to the Google servers and obtain an access token. 
         
         If obtained, Google user exists, and we can proceed further with authentication. 
         
@@ -22,10 +22,9 @@ def verifyGoogleUser(code: dict) -> dict:
         
         `Also, verify the user if not yet verified.`
     '''
-    redirectURL = "http://localhost:3000"
-
     code = code["code"]
-    AccessToken = googleObtainToken(code, redirectUri=redirectURL)
+    
+    AccessToken = googleObtainToken(code)
 
     if AccessToken:
         googleUser = googleObtainUserInfo(accessToken=AccessToken)
@@ -40,21 +39,22 @@ def verifyGoogleUser(code: dict) -> dict:
     return None
 
 
-def googleObtainToken(*, code: str, redirectUri: str) -> str:
+def googleObtainToken(code: str) -> str:
     """
         Use an authorization code to fetch `JSON Web Tokens` from the Google servers. This will always give you JWT's as your Google account exists.
         
         Returns the `access token` obtained from the response.
     """
+    redirect_uri = "http://localhost:3000"
+    
     data = {
         "code": code,
         "client_id": settings.GOOGLE_OAUTH2_CLIENT_ID,
         "client_secret": settings.GOOGLE_OAUTH2_CLIENT_SECRET,
-        "redirect_uri": redirectUri,
+        "redirect_uri": redirect_uri,
         "grant_type": "authorization_code",
     }
     response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
-    print(response)
 
     if not response.ok:
         raise ValidationError("Failed to obtain access token from Google.")
@@ -86,6 +86,7 @@ def jwtLogin(user) -> dict:
     access = refresh.access_token
 
     # Custom Claims
+    access["username"] = user.username
     access["name"] = str(user.first_name + " " + user.last_name)
     access["email"] = user.email
     access["isVerified"] = user.verified

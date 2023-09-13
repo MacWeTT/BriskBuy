@@ -12,12 +12,11 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class GoogleLoginAndSignupView(APIView):
+class GoogleLoginView(APIView):
     def post(self, request):
         data = request.data
         codeObj = data["code"]
         user = verifyGoogleUser(codeObj)
-
         if user is not None:
             tokens = jwtLogin(user=user)
         else:

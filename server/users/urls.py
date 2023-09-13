@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import GoogleLoginAndSignupView
+from .views import GoogleLoginView
 from .views import LoginUserView, SignUpUserView
 
 
@@ -12,5 +12,5 @@ urlpatterns = [
 
 # Google Auth
 urlpatterns += [
-    path("google/", GoogleLoginAndSignupView.as_view(), name="google_login_or_signup"),
+    path("google/", GoogleLoginView.as_view(), name="google_login_or_signup"),
 ]

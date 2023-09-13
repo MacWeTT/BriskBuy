@@ -105,13 +105,25 @@ const Login = () => {
     onSuccess: async (codeResponse) => {
       axios({
         method: "POST",
-        url: `${backendURL}/users/google/login`,
+        url: `${backendURL}/users/google/`,
         data: {
           code: codeResponse,
         },
       })
         .then((response) => {
-          console.log(response.data);
+          console.log(response);
+          dispatch(setUser(response.data));
+          toast({
+            position: "top",
+            status: "success",
+            title: "Login Successful",
+            description: "You have been logged in successfully. Redirecting...",
+            duration: 1500,
+          });
+          setTimeout(() => {
+            dispatch(setUser(response));
+            router.push("/");
+          }, 1500);
         })
         .catch((error) => {
           console.log(error);
