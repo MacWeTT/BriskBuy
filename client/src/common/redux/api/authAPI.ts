@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   LoginCredentials,
   RegisterCredentials,
+  ChangePasswordCredentials,
   UserState,
 } from "@/common/types/user";
 
@@ -45,6 +46,20 @@ export const authAPI = createApi({
         };
       },
     }),
+    editUserProfile: builder.mutation({
+      query: (user: UserState) => ({
+        url: "profile/",
+        method: "PATCH",
+        body: user,
+      }),
+    }),
+    changePassword: builder.mutation({
+      query: (passwords: ChangePasswordCredentials) => ({
+        url: "change-password/",
+        method: "PUT",
+        body: passwords,
+      }),
+    }),
   }),
 });
 
@@ -52,4 +67,6 @@ export const {
   useLoginUserMutation,
   useRegisterUserMutation,
   useRefreshUserMutation,
+  useEditUserProfileMutation,
+  useChangePasswordMutation,
 } = authAPI;

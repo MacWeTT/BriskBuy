@@ -37,7 +37,7 @@ const userSlice = createSlice({
         username: decoded.username,
         email: decoded.email,
         name: decoded.name,
-        verified: decoded.isVerified,
+        verified: decoded.verified,
       };
       state.access_token = action.payload.access;
       state.refresh_token = action.payload.refresh;

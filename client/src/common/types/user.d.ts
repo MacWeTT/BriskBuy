@@ -42,6 +42,11 @@ export interface RegisterCredentials {
   password2: string;
 }
 
+export interface ChangePasswordCredentials {
+  old_password: string;
+  new_password: string;
+}
+
 export interface JWT {
   token_type: string;
   exp: number;
@@ -51,5 +56,5 @@ export interface JWT {
   username: string;
   name: string;
   email: string;
-  isVerified: boolean;
+  verified: boolean;
 }

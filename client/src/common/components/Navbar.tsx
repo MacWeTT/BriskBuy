@@ -26,7 +26,7 @@ import CategoryNav from "./CategoryNav";
 
 //React-Icons
 import { BiShoppingBag, BiChevronDown, BiHeart } from "react-icons/bi";
-import { BsPerson } from "react-icons/bs";
+import { TbUserEdit } from "react-icons/tb";
 import { FaSearch } from "react-icons/fa";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 
@@ -71,6 +71,7 @@ const Navbar = () => {
               fontSize="lg"
               color="secondary"
               ml={2}
+              autoComplete="disabled"
               onChange={handleSearchInput}
             />
             <InputRightElement>
@@ -103,18 +104,17 @@ const Navbar = () => {
                   <PopoverHeader textAlign="center">Your Account</PopoverHeader>
                   {isLoggedIn ? (
                     <PopoverBody>
-                      <Link href="/user/profile">
+                      <Link href="/user/edit-profile">
                         <Flex
                           position="relative"
-                          justifyContent="space-between"
                           alignItems="center"
                           fontSize="28"
                           my={2}
                         >
-                          <BsPerson />
+                          <TbUserEdit />
                           <CustomText
                             variant="paragraph"
-                            text="Your Profile"
+                            text="Edit Profile"
                             px="1"
                           />
                         </Flex>
@@ -122,7 +122,6 @@ const Navbar = () => {
                       <Link href="/user/orders">
                         <Flex
                           position="relative"
-                          justifyContent="space-between"
                           alignItems="center"
                           fontSize="28"
                           my={2}
