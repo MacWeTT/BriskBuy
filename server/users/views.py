@@ -1,5 +1,6 @@
-from rest_framework import status, permissions
+from rest_framework import status, permissions, generics
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
@@ -28,9 +29,6 @@ class GoogleLoginView(APIView):
         return Response(tokens, status=status.HTTP_200_OK)
     
 
-class GoogleSignUpView(APIView):
-    pass
-
 
 class LoginUserView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
@@ -47,13 +45,29 @@ class SignUpUserView(CreateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ChangePasswordView(APIView):
+class EditProfileView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = ChangePasswordSerializer
+    serializer_class = EditProfileSerializer
+    
+    def put(self,request):
+        serializer = self.get_serializer(data=request.data)
+        data = serializer.validated_data
+        user = User.objects.get(id=request.user.id)
+        
+        serializer = self.get_serializer(user, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request):
+
+class ChangePasswordView(APIView):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -65,20 +79,50 @@ class ChangePasswordView(APIView):
             user.save()
             return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
         else:
-            raise ValidationError("Old password is incorrect.")
+            raise Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class EditProfileView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = EditProfileSerializer
+# class VerifyEmailView(APIView):
+#     serializer_class = EmailVerificationSerlializer
     
-    def post(self,request):
-        data = request.data
-        user = User.objects.get(id=request.user.id)
-        
-        serializer = self.get_serializer(user, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def get(self, request, uidb64=None, token=None):
+#         if uidb64 and token:
+#             try:
+#                 uid = smart_text(urlsafe_base64_decode(uidb64))
+#                 user = User.objects.get(id=uid)
+#             except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#                 user = None
+            
+#             if user is not None and default_token_generator.check_token(user, token):
+#                 user.verified = True
+#                 user.save()
+#                 return Response({"message": "Email verified successfully."}, status=status.HTTP_200_OK)
+#             else:
+#                 return Response({"message": "Email verification failed."}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({"message": "Email verification failed."}, status=status.HTTP_400_BAD_REQUEST)
+
+#     def post(self, request):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = self.perform_create(serializer)
+
+#         # Create a verification token
+#         token = default_token_generator.make_token(user)
+#         uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+#         # Build the verification URL
+#         current_site = get_current_site(request)
+#         verification_url = f'http://{current_site.domain}/api/verify/{uid}/{token}/'
+
+#         # Send verification email
+#         subject = 'Activate Your Account'
+#         message = render_to_string('email/verification_email.txt', {
+#             'user': user,
+#             'verification_url': verification_url,
+#         })
+#         email = EmailMessage(subject, message, to=[user.email])
+#         email.send()
+
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+

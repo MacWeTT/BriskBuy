@@ -48,18 +48,16 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
-    "BLACKLIST_AFTER_ROTATION": True,
-    "ROTATE_REFRESH_TOKENS": True,
-    "UPDATE_LAST_LOGIN": True,
     "SIGNING_KEY": os.environ.get("SECRET_KEY"),
+    "AUTH_HEADER_TYPES": ("Bearer",),
     "TOKEN_OBTAIN_SERIALIZER": "users.utils.serializers.TokenObtainPairSerializer",
 }
 

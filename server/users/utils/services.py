@@ -1,5 +1,4 @@
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -12,7 +11,7 @@ GOOGLE_ACCESS_TOKEN_OBTAIN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 
-def verifyGoogleUser(code: dict) -> dict:
+def verifyGoogleUser(code: str) -> dict:
     '''
         Verify the `Google user`. Send the authorization code to the Google servers and obtain an access token. 
         
@@ -22,21 +21,20 @@ def verifyGoogleUser(code: dict) -> dict:
         
         `Also, verify the user if not yet verified.`
     '''
-    code = code["code"]
-    
     AccessToken = googleObtainToken(code)
 
     if AccessToken:
         googleUser = googleObtainUserInfo(accessToken=AccessToken)
-        user = User.objects.get(email=googleUser["email"])
-        if not user.verified:
-            user.verified = True
-            user.save()
-        if not user:
-            user = createGoogleUser(googleUser) # Create user
+        try:
+            user = User.objects.get(email=googleUser["email"])
+            if not user.verified:
+                user.verified = True
+                user.save()
+        except User.DoesNotExist:
+            user = createGoogleUser(googleUser)
         return user
-    
-    return None
+    else:
+        return None
 
 
 def googleObtainToken(code: str) -> str:
@@ -89,7 +87,7 @@ def jwtLogin(user) -> dict:
     access["username"] = user.username
     access["name"] = str(user.first_name + " " + user.last_name)
     access["email"] = user.email
-    access["isVerified"] = user.verified
+    access["verified"] = user.verified
 
     tokens = {"refresh": str(refresh), "access": str(access)}
     return tokens
@@ -99,18 +97,20 @@ def createGoogleUser(UserInfo: dict) -> User:
     """
         Create a user object from the user information fetched from Google.
     """
-    email = UserInfo["email"]
-    username = email.split("@")[0]
-    verifiedEmail = UserInfo["email_verified"]
+    email: str = UserInfo["email"]
+    username: str = email.split("@")[0]
     user, created = User.objects.get_or_create(
         email=email,
         defaults={
             "username": username,
             "first_name": UserInfo["given_name"],
             "last_name": UserInfo["family_name"],
-            "verified": verifiedEmail,
+            "verified": UserInfo["email_verified"],
         },
     )
+    if created:
+        user.set_unusable_password()
+        user.save()
     return user
 
 

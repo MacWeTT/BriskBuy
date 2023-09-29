@@ -25,6 +25,7 @@ import { MdVerified } from "react-icons/md";
 // Custom components
 import PageWrapper from "@/common/components/UI/PageWrapper";
 import CustomText from "@/common/components/UI/CustomText";
+import CustomButton from "@/common/components/UI/CustomButton";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const EditProfile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [info, setInfo] = useState<User>(user);
+  const [editedEmail, setEditedEmail] = useState(false);
 
   const handleSaveClick = () => {
     // Update the user information in your Redux store or API here
@@ -99,7 +101,12 @@ const EditProfile = () => {
                     />
                   </Td>
                 ) : (
-                  <Td>{info.email}</Td>
+                  <Td>
+                    <Flex gap={4} alignItems="center">
+                      {info.email}
+                      {info.verified && <MdVerified />}
+                    </Flex>
+                  </Td>
                 )}
               </Tr>
             </Tbody>
@@ -110,12 +117,11 @@ const EditProfile = () => {
                 Save Profile
               </Button>
             ) : (
-              <Button
-                colorScheme="blue"
+              <CustomButton
+                variant="solid"
+                text="Edit Profile"
                 onClick={() => setIsEditing(!isEditing)}
-              >
-                Edit Profile
-              </Button>
+              />
             )}
             <Button
               colorScheme="yellow"

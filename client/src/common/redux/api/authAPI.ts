@@ -5,6 +5,7 @@ import {
   ChangePasswordCredentials,
   UserState,
 } from "@/common/types/user";
+import { RootState } from "@/common/redux/store";
 
 const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -12,10 +13,8 @@ export const authAPI = createApi({
   reducerPath: "authAPI",
   baseQuery: fetchBaseQuery({
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as UserState).access_token;
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
+      const token = (getState() as RootState).user.access_token;
+      if (token) headers.set("Authorization", `Bearer ${token}`);
       return headers;
     },
     baseUrl: `${BASEURL}/users/`,
@@ -49,14 +48,14 @@ export const authAPI = createApi({
     editUserProfile: builder.mutation({
       query: (user: UserState) => ({
         url: "profile/",
-        method: "PATCH",
+        method: "PUT",
         body: user,
       }),
     }),
     changePassword: builder.mutation({
       query: (passwords: ChangePasswordCredentials) => ({
         url: "change-password/",
-        method: "PUT",
+        method: "PATCH",
         body: passwords,
       }),
     }),

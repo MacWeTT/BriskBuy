@@ -107,7 +107,7 @@ const Login = () => {
         method: "POST",
         url: `${backendURL}/users/google/`,
         data: {
-          code: codeResponse,
+          code: codeResponse.code,
         },
       })
         .then((response) => {

@@ -1,10 +1,20 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth import get_user_model
+import uuid
 
 User = get_user_model()
 
+class Base(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(db_index=True,default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:             
+        abstract = True
 
-class Category(models.Model):
+
+class Category(Base):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField(blank=True)
@@ -16,7 +26,7 @@ class Category(models.Model):
         return self.name
 
 
-class Product(models.Model):
+class Product(Base):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     image = models.ImageField(
@@ -35,7 +45,7 @@ class Product(models.Model):
         return self.name
 
 
-class Order(models.Model):
+class Order(Base):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=True)
@@ -45,14 +55,14 @@ class Order(models.Model):
         return str(self.id)
 
 
-class OrderItem(models.Model):
+class OrderItem(Base):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
 
-class ShippingAddress(models.Model):
+class ShippingAddress(Base):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     street_address = models.CharField(max_length=100)
