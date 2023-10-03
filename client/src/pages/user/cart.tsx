@@ -10,6 +10,7 @@ import {
   increase,
   clearCart,
 } from "@/common/redux/reducers/cartSlice";
+import { useGetCartQuery } from "@/common/redux/api/productAPI";
 
 //Chakra UI
 import {
@@ -38,13 +39,10 @@ import CustomText from "@/common/components/UI/CustomText";
 //React-Icons
 import { BiSolidChevronRight, BiSolidChevronLeft } from "react-icons/bi";
 import { HiChevronUp, HiChevronDown } from "react-icons/hi";
+import { Product } from "@/common/types/product";
 
 const Cart = () => {
   const { cartItems, total } = useSelector((state: RootState) => state.cart);
-
-  useEffect(() => {
-    console.log(cartItems);
-  }, [cartItems]);
 
   const dispatch = useDispatch();
   const router = useRouter();

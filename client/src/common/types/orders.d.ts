@@ -16,3 +16,8 @@ export interface Order {
 export interface addToCartDTO {
   product_id: string;
 }
+
+export interface patchCartDTO {
+  method: string;
+  product_id: string;
+}

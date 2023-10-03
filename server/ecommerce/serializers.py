@@ -21,7 +21,7 @@ class CategorySerializer(ModelSerializer):
 class OrderItemSerializer(ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = "__all__"
+        exclude = ['created_at','updated_at','date_added','order']
 
 
 class OrderSerializer(ModelSerializer):

@@ -10,7 +10,7 @@ import { refreshUser, logout } from "../../reducers/userSlice";
 const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${BASEURL}/`,
+  baseUrl: `${BASEURL}/users/`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).user.access_token;
@@ -19,7 +19,7 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const reAuthEcommerceBaseQuery: BaseQueryFn<
+const UserBaseQuery: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
@@ -30,7 +30,7 @@ const reAuthEcommerceBaseQuery: BaseQueryFn<
       const refreshResult = await baseQuery(
         {
           credentials: "include",
-          url: "users/login/refresh/",
+          url: "login/refresh/",
           method: "POST",
           body: { refresh: (api.getState() as RootState).user.refresh_token },
         },
@@ -47,8 +47,10 @@ const reAuthEcommerceBaseQuery: BaseQueryFn<
     } catch (error) {
       console.error(error);
     }
+  } else {
+    result = await baseQuery(args, api, extraOptions);
   }
   return result;
 };
 
-export default reAuthEcommerceBaseQuery;
+export default UserBaseQuery;

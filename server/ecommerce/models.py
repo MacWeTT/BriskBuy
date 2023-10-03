@@ -61,9 +61,12 @@ class Order(Base):
     
     @property
     def get_cart_items(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.quantity for item in orderitems])
-        return total
+        '''
+            Get cart items of a user
+        '''
+        cart_items = OrderItem.objects.filter(order=self)
+        print(cart_items)
+        return cart_items
 
 
 class  OrderItem(Base):

@@ -86,7 +86,6 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
       });
       const response = await addToCart({ product_id: product.id }).unwrap();
       console.log(response);
-      // dispatch(addItem(response));
       toast({
         position: "top",
         status: "success",

@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import reAuthBaseQuery from "./reAuthBaseQuery/reAuthUserBaseQuery";
+import UserBaseQuery from "./reAuth/UserBaseQuery";
 import {
   LoginCredentials,
   RegisterCredentials,
@@ -10,7 +10,7 @@ import {
 
 export const authAPI = createApi({
   reducerPath: "authAPI",
-  baseQuery: reAuthBaseQuery,
+  baseQuery: UserBaseQuery,
   endpoints: (builder) => ({
     loginUser: builder.mutation({
       query: (credentials: LoginCredentials) => ({
