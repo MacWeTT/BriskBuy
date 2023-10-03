@@ -72,7 +72,6 @@ const Login = () => {
     } else {
       try {
         const response = await login({ username, password }).unwrap();
-        console.log(response);
         toast({
           position: "top",
           status: "success",

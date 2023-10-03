@@ -5,7 +5,9 @@ from .models import *
 class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
-        fields = "__all__"
+        exclude = [
+            'created_at','updated_at','stock'
+        ]
 
 
 class CategorySerializer(ModelSerializer):
@@ -29,6 +31,9 @@ class OrderSerializer(ModelSerializer):
         model = Order
         fields = "__all__"
 
+
+class CartSerializer(ModelSerializer):
+    items = OrderItemSerializer(many=True)    
 
 class ShippingAddressSerializer(ModelSerializer):
     class Meta:

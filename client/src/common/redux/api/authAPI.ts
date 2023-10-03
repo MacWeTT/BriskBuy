@@ -1,24 +1,16 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import reAuthBaseQuery from "./reAuthBaseQuery/reAuthUserBaseQuery";
 import {
   LoginCredentials,
   RegisterCredentials,
   ChangePasswordCredentials,
   UserState,
+  User,
 } from "@/common/types/user";
-import { RootState } from "@/common/redux/store";
-
-const BASEURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 export const authAPI = createApi({
   reducerPath: "authAPI",
-  baseQuery: fetchBaseQuery({
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).user.access_token;
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
-    baseUrl: `${BASEURL}/users/`,
-  }),
+  baseQuery: reAuthBaseQuery,
   endpoints: (builder) => ({
     loginUser: builder.mutation({
       query: (credentials: LoginCredentials) => ({
@@ -36,18 +28,9 @@ export const authAPI = createApi({
         };
       },
     }),
-    refreshUser: builder.mutation({
-      query(refresh: string) {
-        return {
-          url: "token/refresh/",
-          method: "POST",
-          body: refresh,
-        };
-      },
-    }),
     editUserProfile: builder.mutation({
-      query: (user: UserState) => ({
-        url: "profile/",
+      query: (user: User) => ({
+        url: "edit-profile/",
         method: "PUT",
         body: user,
       }),
@@ -65,7 +48,6 @@ export const authAPI = createApi({
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
-  useRefreshUserMutation,
   useEditUserProfileMutation,
   useChangePasswordMutation,
 } = authAPI;

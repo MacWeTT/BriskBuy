@@ -1,11 +1,19 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import reAuthEcommerceBaseQuery from "./reAuthBaseQuery/reAuthEcommerceBaseQuery";
+import { addToCartDTO } from "@/common/types/orders";
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.NEXT_PUBLIC_API_URL}/products/`,
+  baseQuery: reAuthEcommerceBaseQuery,
+  endpoints: (builder) => ({
+    addToCart: builder.mutation({
+      query: (body: addToCartDTO) => ({
+        url: "api/cart/",
+        method: "POST",
+        body: body,
+      }),
+    }),
   }),
-  endpoints: (builder) => ({}),
 });
 
-export const {} = productAPI;
+export const { useAddToCartMutation } = productAPI;

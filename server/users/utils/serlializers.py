@@ -34,6 +34,9 @@ class EditProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username", "email", "first_name", "last_name")
 
+    def is_valid(self, *, raise_exception=False):
+        super().is_valid(raise_exception=raise_exception)
+
 class EmailVerificationSerlializer(serializers.ModelSerializer):
     class Meta:
         model = User

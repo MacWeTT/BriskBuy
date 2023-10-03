@@ -8,20 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "@/common/redux/reducers/cartSlice";
 import { addItemToWishlist } from "@/common/redux/reducers/wishlistSlice";
 import { RootState } from "@/common/redux/store";
+import { useAddToCartMutation } from "@/common/redux/api/productAPI";
 
 //UI Components
 import {
   Flex,
   Box,
   Image,
-  Skeleton,
   Card,
   CardBody,
-  Container,
-  List,
   ListItem,
-  ListIcon,
-  OrderedList,
   UnorderedList,
   useToast,
 } from "@chakra-ui/react";
@@ -58,6 +54,8 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
   const toast = useToast();
   const dispatch = useDispatch();
 
+  const [addToCart, { isLoading }] = useAddToCartMutation();
+
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [page, setPage] = useState(1);
   const { products, hasMore } = useGetProducts(page);
@@ -69,16 +67,49 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
   const { wishlistItems } = useSelector((state: RootState) => state.wishlist);
   const [alreadyInWishlist, setAlreadyInWishlist] = useState(false);
 
+  const handleAddToCart = async () => {
+    if (alreadyInCart) {
+      toast({
+        position: "top",
+        status: "info",
+        title: "Item already in cart.",
+        duration: 700,
+      });
+      return;
+    }
+    try {
+      toast({
+        position: "top",
+        status: "info",
+        title: "Adding item to cart..",
+        duration: 500,
+      });
+      const response = await addToCart({ product_id: product.id }).unwrap();
+      console.log(response);
+      // dispatch(addItem(response));
+      toast({
+        position: "top",
+        status: "success",
+        title: "Item added to cart!",
+        duration: 500,
+      });
+    } catch (error: any) {
+      toast({
+        position: "top",
+        status: "error",
+        title: "Error adding to cart !",
+        description: `${error.error}`,
+      });
+    }
+  };
+
   useEffect(() => {
-    if (cartItems.find((item) => item.id === product.id))
-      setAlreadyInCart(true);
     if (wishlistItems.find((item) => item.id === product.id))
       setAlreadyInWishlist(true);
-  }, [cartItems, wishlistItems, product]);
+  }, [wishlistItems, product]);
 
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
+  if (router.isFallback) return <div>Loading...</div>;
+
   return (
     <>
       <Head>
@@ -116,25 +147,8 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
               <CustomButton
                 variant="solid"
                 text={alreadyInCart ? "In Cart" : "Add to Cart"}
-                onClick={() => {
-                  if (alreadyInCart) {
-                    toast({
-                      position: "top",
-                      status: "info",
-                      title: "Item already in cart.",
-                      duration: 900,
-                    });
-                    return;
-                  }
-                  dispatch(addItem(product));
-                  setAlreadyInCart(true);
-                  toast({
-                    position: "top",
-                    status: "success",
-                    title: "Item added to cart !",
-                    duration: 900,
-                  });
-                }}
+                isLoading={isLoading}
+                onClick={handleAddToCart}
               />
               <CustomButton
                 variant="border"

@@ -8,9 +8,10 @@ from ..serializers import (
     OrderSerializer,
     ShippingAddressSerializer,
 )
-from ..models import Product, Category, Order, ShippingAddress
+from ..models import Product, Category, Order,OrderItem, ShippingAddress
 from django.db.models import Q
 from django.utils.text import slugify
+from rest_framework import status
 
 
 # Create your views here.
@@ -74,7 +75,7 @@ class CategoryListView(APIView):
 
 class OrderView(APIView):
     def get(self, request):
-        customer = request.user.customer
+        customer = request.data.get("pk", None)
         if customer:
             order = Order.objects.filter(customer=customer, complete=False)
         else:
@@ -82,6 +83,52 @@ class OrderView(APIView):
 
         serializer = OrderSerializer(order, many=True)
         return Response(serializer.data)
+
+
+class CartView(APIView):
+    def post(self, request):
+        data: dict = request.data
+        user: str = request.user
+        
+        product = Product.objects.get(id=data['product_id'])
+        
+        try:
+            order, created = Order.objects.get_or_create(customer=user, complete=False)
+            if created:
+                orderItem = OrderItem.objects.create(product=product, order=order, quantity=1)
+                response = {
+                    "order": order.id,
+                    'message': 'Item was added to cart'
+                }
+            else:
+                orderItem, _ = OrderItem.objects.get_or_create(product=product, order=order)
+                orderItem.quantity += 1
+                orderItem.save()
+                response = {
+                    "order": order.id,
+                    'message': 'Item quantity has been increased.'
+                }
+                
+            return Response(response, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            raise e
+        
+    def patch(self,request):
+        pass
+    
+    def delete(self,request):
+        serializer_class = OrderSerializer
+        serializer = serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        data = serializer.validated_data
+        order = Order.objects.get(customer=data.pk, complete=False)
+        order.delete()
+        response = {
+            'message': 'Cart was deleted.'
+        }
+        return Response(response, status=status.HTTP_204_NO_CONTENT)
 
 
 class ShippingAddressView(APIView):

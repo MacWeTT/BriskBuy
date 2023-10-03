@@ -12,11 +12,12 @@ from .utils.services import jwtLogin, verifyGoogleUser
 from django.contrib.auth import get_user_model
 
 #TODO: Add mixins to send errors to the client instead of 500 errors
+#TODO: Create a custom view which gives error 403 instead of 401 when token is expired and inherit from it
 
 User = get_user_model()
 
 
-class GoogleLoginView(APIView):
+class GoogleLoginSignUpView(APIView):
     def post(self, request):
         data = request.data
         codeObj = data["code"]
@@ -25,9 +26,7 @@ class GoogleLoginView(APIView):
             tokens = jwtLogin(user=user)
         else:
             raise ValidationError("Google user doesn't exist.")
-
         return Response(tokens, status=status.HTTP_200_OK)
-    
 
 
 class LoginUserView(TokenObtainPairView):
@@ -51,21 +50,24 @@ class EditProfileView(APIView):
     serializer_class = EditProfileSerializer
     
     def put(self,request):
-        serializer = self.get_serializer(data=request.data)
-        data = serializer.validated_data
-        user = User.objects.get(id=request.user.id)
+        data: dict = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
         
-        serializer = self.get_serializer(user, data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
+            response = {"message": "Profile updated successfully."}
+            return Response(response, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            response = {"error" : serializer.errors}
+            print(response)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangePasswordView(APIView):
-    serializer_class = ChangePasswordSerializer
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
 
     def patch(self, request):
         serializer = self.serializer_class(data=request.data)

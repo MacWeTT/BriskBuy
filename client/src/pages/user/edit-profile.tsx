@@ -4,7 +4,9 @@ import { useState } from "react";
 
 // Redux
 import { useSelector, useDispatch } from "react-redux";
+import { useEditUserProfileMutation } from "@/common/redux/api/authAPI";
 import { RootState } from "@/common/redux/store";
+import { updateUser } from "@/common/redux/reducers/userSlice";
 import { User } from "@/common/types/user";
 
 // Chakra UI
@@ -33,20 +35,40 @@ const EditProfile = () => {
   const router = useRouter();
 
   const { user } = useSelector((state: RootState) => state.user);
+  const [edit, { isLoading }] = useEditUserProfileMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [info, setInfo] = useState<User>(user);
-  const [editedEmail, setEditedEmail] = useState(false);
 
-  const handleSaveClick = () => {
-    // Update the user information in your Redux store or API here
-    // For now, we'll just log the updated info
-    console.log("Updated User Info:", info);
-
-    setIsEditing(false);
-
-    // Dispatch an action to update the user information in your Redux store
-    // dispatch(updateUser(info));
+  const handleSaveClick = async () => {
+    toast({
+      position: "top",
+      status: "info",
+      title: "Editing your profile...",
+      duration: 800,
+    });
+    try {
+      const response = await edit(info).unwrap();
+      if (response.status === 200) {
+        toast({
+          position: "top",
+          status: "success",
+          title: "Profile edited successfully!",
+          duration: 800,
+        });
+      }
+      dispatch(updateUser(response));
+      setIsEditing(false);
+    } catch (error: any) {
+      toast({
+        position: "top",
+        status: "error",
+        title: "Error editing profile.",
+        description: "Please try again.",
+        duration: 800,
+      });
+      console.error(error);
+    }
   };
 
   return (
@@ -113,7 +135,11 @@ const EditProfile = () => {
           </Table>
           <Flex justifyContent="center" gap={4} mt={4} justify="flex-end">
             {isEditing ? (
-              <Button colorScheme="green" onClick={handleSaveClick}>
+              <Button
+                colorScheme="green"
+                onClick={handleSaveClick}
+                isLoading={isLoading}
+              >
                 Save Profile
               </Button>
             ) : (
