@@ -43,6 +43,8 @@ const Login = () => {
     if (isLoggedIn) router.push("/");
   });
 
+  //TODO: Get cart items from backend when logged in successfully.
+
   const router = useRouter();
   const toast = useToast();
   const dispatch = useDispatch();

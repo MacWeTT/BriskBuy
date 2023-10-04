@@ -86,6 +86,13 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
       });
       const response = await addToCart({ product_id: product.id }).unwrap();
       console.log(response);
+      dispatch(
+        addItem({
+          ...product,
+          order_item: response.order_item,
+          quantity: response.quantity,
+        })
+      );
       toast({
         position: "top",
         status: "success",
@@ -103,9 +110,11 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
   };
 
   useEffect(() => {
+    if (cartItems.find((item) => item.id === product.id))
+      setAlreadyInCart(true);
     if (wishlistItems.find((item) => item.id === product.id))
       setAlreadyInWishlist(true);
-  }, [wishlistItems, product]);
+  }, [cartItems, wishlistItems, product]);
 
   if (router.isFallback) return <div>Loading...</div>;
 

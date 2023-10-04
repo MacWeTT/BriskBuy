@@ -110,6 +110,8 @@ class CartView(APIView):
                 orderItem = OrderItem.objects.create(product=product, order=order, quantity=1)
                 response = {
                     "order": order.id,
+                    "order_item": orderItem.id,
+                    "quantity": orderItem.quantity,
                     'message': 'Item was added to cart'
                 }
                 return Response(response, status=status.HTTP_201_CREATED)
@@ -119,6 +121,8 @@ class CartView(APIView):
                 orderItem.save()
                 response = {
                     "order": order.id,
+                    "order_item": orderItem.id,
+                    "quantity": orderItem.quantity,
                     'message': 'Item quantity has been increased.'
                 }
                 return Response(response, status=status.HTTP_200_OK)
@@ -136,11 +140,12 @@ class CartView(APIView):
             item.quantity += 1
             item.save()
         if method == "DECREASE":
-            item.quantity -= 1
-            item.save()
-        if method == "DELETE":
-            item.delete()
-        
+            if item.quantity == 1:
+                item.delete()
+            else:
+                item.quantity -= 1
+                item.save()
+            
         response = {
             'message': f'Action "{method}" was performed successfully.'
         }

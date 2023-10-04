@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useState } from "react";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -10,11 +10,13 @@ import {
   increase,
   clearCart,
 } from "@/common/redux/reducers/cartSlice";
-import { useGetCartQuery } from "@/common/redux/api/productAPI";
+import {
+  usePatchCartMutation,
+  useDeleteCartMutation,
+} from "@/common/redux/api/productAPI";
 
 //Chakra UI
 import {
-  Box,
   Container,
   Flex,
   TableContainer,
@@ -24,11 +26,11 @@ import {
   Tr,
   Th,
   Td,
-  Tfoot,
   Card,
   CardBody,
   Image,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 //Custom Components
@@ -43,11 +45,57 @@ import { Product } from "@/common/types/product";
 
 const Cart = () => {
   const { cartItems, total } = useSelector((state: RootState) => state.cart);
-
   const dispatch = useDispatch();
   const router = useRouter();
+  const toast = useToast();
+  const [patchCart] = usePatchCartMutation();
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  const handleCartPatch = async (id: string, method: string) => {
+    try {
+      const response = await patchCart({
+        method: method,
+        product_id: id,
+      }).unwrap();
+      console.log(response);
+      switch (method) {
+        case "INCREASE":
+          dispatch(increase(id));
+          toast({
+            title: "Success",
+            description: "Item quantity increased successfully.",
+            status: "success",
+            position: "top",
+            duration: 1000,
+            isClosable: true,
+          });
+          break;
+        case "DECREASE":
+          dispatch(decrease(id));
+          toast({
+            title: "Success",
+            description: "Item quantity decreased successfully.",
+            status: "success",
+            position: "top",
+            duration: 1000,
+            isClosable: true,
+          });
+          break;
+        default:
+          break;
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.data.detail,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -128,12 +176,18 @@ const Cart = () => {
                               >
                                 <HiChevronUp
                                   onClick={() => {
-                                    dispatch(increase(item.id));
+                                    handleCartPatch(
+                                      item.order_item,
+                                      "INCREASE"
+                                    );
                                   }}
                                 />
                                 <HiChevronDown
                                   onClick={() => {
-                                    dispatch(decrease(item.id));
+                                    handleCartPatch(
+                                      item.order_item,
+                                      "DECREASE"
+                                    );
                                   }}
                                 />
                               </Flex>
