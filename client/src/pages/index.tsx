@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 
 //Chakra Components
@@ -16,15 +16,24 @@ import LandingCarousel from "@/common/components/UI/Carousel/LandingCarousel";
 //Miscellaneous Imports
 import { home } from "@/common/typography/home";
 import useGetProducts from "@/hooks/useGetProducts";
-import { RootState } from "@/common/redux/store";
-// import { useSelector } from "react-redux";
+import { useGetCartQuery } from "@/common/redux/api/productAPI";
+import { refreshCart } from "@/common/redux/reducers/cartSlice";
+import { useDispatch } from "react-redux";
 
 function Home() {
   const [page, setPage] = useState(1);
   const { loading, products, hasMore } = useGetProducts(page);
   const heroCarouselProducts = products?.slice(0, 5);
 
-  // const { user } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const { data, isSuccess } = useGetCartQuery();
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(refreshCart(data));
+    }
+    //eslint-disable-next-line
+  }, [data]);
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 

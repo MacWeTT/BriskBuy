@@ -1,7 +1,9 @@
 import Head from "next/head";
 
+import useGetShipping from "@/hooks/useGetShipping";
 import { useSelector } from "react-redux";
 import { RootState } from "@/common/redux/store";
+import { useState, useEffect } from "react";
 
 //Chakra UI
 import {
@@ -18,24 +20,75 @@ import {
   Td,
   Flex,
   Text,
-  Box,
   Stack,
   Skeleton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 
 //Custom Components
 import PageWrapper from "@/common/components/UI/PageWrapper";
 import CustomText from "@/common/components/UI/CustomText";
 import CustomButton from "@/common/components/UI/CustomButton";
-import useGetShipping from "@/hooks/useGetShipping";
-import { useEffect } from "react";
+import ShippingAddressBox from "@/common/components/ShippingAddressBox";
+import { useAddShippingMutation } from "@/common/redux/api/productAPI";
+import { ShippingAddress } from "@/common/types/user";
 
 const Checkout = () => {
   const { cartItems, total } = useSelector((state: RootState) => state.cart);
   const { user } = useSelector((state: RootState) => state.user);
   const { shipping, loading, error } = useGetShipping(user.pk!);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
+
+  const [addShipping, { isLoading }] = useAddShippingMutation();
+  const [newShippingAddress, setNewShippingAddress] = useState(
+    {} as ShippingAddress
+  );
+  const handleShippingSave = async () => {
+    toast({
+      position: "top",
+      status: "info",
+      title: "Adding Shipping Address...",
+      duration: 800,
+    });
+
+    try {
+      const response = await addShipping(newShippingAddress).unwrap();
+      if (response) {
+        toast({
+          position: "top",
+          status: "success",
+          title: "Shipping Address Added",
+          description: "Your shipping address has been added successfully.",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (err: any) {
+      toast({
+        position: "top",
+        status: "error",
+        title: "An error occured",
+        description: "Please try again later.",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <>
@@ -141,26 +194,50 @@ const Checkout = () => {
                 <CustomText variant="paragraph" text="An error occured" />
               ) : (
                 shipping.map((ship) => (
-                  <Box key={ship.id} bg="gray.200" p={4} rounded="lg">
-                    <CustomText
-                      variant="paragraph"
-                      text={`Street Address: ${ship.street_address}`}
-                    />
-                    <CustomText
-                      variant="paragraph"
-                      text={`City: ${ship.city}`}
-                    />
-                    <CustomText
-                      variant="paragraph"
-                      text={`State: ${ship.state}`}
-                    />
-                    <CustomText
-                      variant="paragraph"
-                      text={`Postal Code: ${ship.postal_code}`}
-                    />
-                  </Box>
+                  <ShippingAddressBox key={ship.id} ship={ship} />
                 ))
               )}
+              <CustomButton
+                variant="border"
+                text="Add New Address"
+                onClick={onOpen}
+              ></CustomButton>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Add new address</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={6}>
+                    <FormControl>
+                      <FormLabel>Street Address</FormLabel>
+                      <Input placeholder="Your address here..." />
+                    </FormControl>
+                    <FormControl mt={4}>
+                      <FormLabel>City</FormLabel>
+                      <Input placeholder="Your city" />
+                    </FormControl>
+                    <FormControl mt={4}>
+                      <FormLabel>State</FormLabel>
+                      <Input placeholder="Your state" />
+                    </FormControl>
+                    <FormControl mt={4}>
+                      <FormLabel>Postal Code</FormLabel>
+                      <Input placeholder="Your postal code" />
+                    </FormControl>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={handleShippingSave}
+                      isLoading={isLoading}
+                    >
+                      Save
+                    </Button>
+                    <Button onClick={onClose}>Cancel</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
             </Stack>
           </Container>
         </Flex>

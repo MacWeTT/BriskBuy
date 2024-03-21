@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { useLoginUserMutation } from "@/common/redux/api/authAPI";
+import { refreshCart } from "@/common/redux/reducers/cartSlice";
 import { setUser } from "@/common/redux/reducers/userSlice";
 import { RootState } from "@/common/redux/store";
 
@@ -42,8 +43,6 @@ const Login = () => {
   useEffect(() => {
     if (isLoggedIn) router.push("/");
   });
-
-  //TODO: Get cart items from backend when logged in successfully.
 
   const router = useRouter();
   const toast = useToast();

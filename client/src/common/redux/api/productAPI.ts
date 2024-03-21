@@ -1,14 +1,15 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import EcommerceBaseQuery from "./reAuth/EcommerceBaseQuery";
 import { addToCartDTO, patchCartDTO } from "@/common/types/orders";
+import { ShippingAddress } from "@/common/types/user";
+import { CartItem } from "@/common/types/cartItem";
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
   baseQuery: EcommerceBaseQuery,
   endpoints: (builder) => ({
-    getCart: builder.query({
+    getCart: builder.query<any, void>({
       query: () => "api/cart/",
-      transformResponse: (response: any) => response.data,
     }),
     addToCart: builder.mutation({
       query: (body: addToCartDTO) => ({
@@ -30,12 +31,22 @@ export const productAPI = createApi({
         method: "DELETE",
       }),
     }),
+    addShipping: builder.mutation({
+      query: (body: ShippingAddress) => ({
+        url: "api/shipping/",
+        method: "POST",
+        body: body,
+      }),
+    }),
   }),
 });
 
 export const {
+  //Cart Mutations
   useGetCartQuery,
   useAddToCartMutation,
   usePatchCartMutation,
   useDeleteCartMutation,
+  //Shipping Address Mutations
+  useAddShippingMutation,
 } = productAPI;

@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +40,6 @@ import CustomText from "@/common/components/UI/CustomText";
 //React-Icons
 import { BiSolidChevronRight, BiSolidChevronLeft } from "react-icons/bi";
 import { HiChevronUp, HiChevronDown } from "react-icons/hi";
-import { Product } from "@/common/types/product";
 
 const Cart = () => {
   const { cartItems, total } = useSelector((state: RootState) => state.cart);
