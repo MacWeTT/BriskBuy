@@ -51,7 +51,7 @@ class Order(Base):
     complete = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return f"{self.customer.username}'s order {self.id}"
     
     @property
     def get_cart_total(self):
@@ -79,6 +79,9 @@ class  OrderItem(Base):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+    
+    def __str__(self):
+        return self.product.name
 
 
 class ShippingAddress(Base):

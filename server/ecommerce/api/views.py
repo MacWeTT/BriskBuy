@@ -76,14 +76,22 @@ class CategoryListView(APIView):
 
 class OrderView(APIView):
     def get(self, request):
-        customer = request.data.get("pk", None)
+        customer = request.user
         if customer:
             order = Order.objects.filter(customer=customer, complete=False)
         else:
             order = []
 
         serializer = OrderSerializer(order, many=True)
-        return Response(serializer.data)
+        cartItems = serializer.data
+        total = 0
+        for item in cartItems:
+            total += item["price"] * item["quantity"]
+        response = {
+            "cartItems" : serializer.data,
+            "total" : total
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class CartView(APIView):
@@ -92,13 +100,24 @@ class CartView(APIView):
         if order:
             order_items = OrderItem.objects.filter(order=order)
             product_data = []
+            total = 0
             for order_item in order_items:
-                product = get_object_or_404(Product, id=order_item.product.id)
-                product_serializer = ProductSerializer(product)
-                product_data.append(product_serializer.data)
-            return Response(product_data, status=status.HTTP_200_OK)
+                product_object = get_object_or_404(Product, id=order_item.product.id)
+                product = ProductSerializer(product_object).data
+                product_data.append({
+                    **product,
+                    "quantity": order_item.quantity,
+                    "order_item": order_item.id
+                })
+                total += product['price'] * order_item.quantity
+                
+            response = {
+                "cartItems" : product_data,
+                "total" : total
+            }
+            return Response(response, status=status.HTTP_200_OK)
         else:
-            return Response({"message": "No open order found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "No open order found"}, status=status.HTTP_204_NO_CONTENT)
     
     def post(self, request):
         data: dict = request.data

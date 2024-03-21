@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .docs import docs
 
-    
+
 urlpatterns = [
     path("staffshit/", admin.site.urls),
     path("", docs.with_ui("swagger"), name="API Docs"),
