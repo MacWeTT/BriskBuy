@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+from .types import JWT
 from django.conf import settings
 import requests
 
@@ -12,15 +13,15 @@ GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 
 def verifyGoogleUser(code: str) -> dict:
-    '''
-        Verify the `Google user`. Send the authorization code to the Google servers and obtain an access token. 
-        
-        If obtained, Google user exists, and we can proceed further with authentication. 
-        
-        Returns the user which was verified via Google. If user doesn't exist, creates a user with the details obtained from Google.
-        
-        `Also, verify the user if not yet verified.`
-    '''
+    """
+    Verify the `Google user`. Send the authorization code to the Google servers and obtain an access token.
+
+    If obtained, Google user exists, and we can proceed further with authentication.
+
+    Returns the user which was verified via Google. If user doesn't exist, creates a user with the details obtained from Google.
+
+    `Also, verify the user if not yet verified.`
+    """
     AccessToken = googleObtainToken(code)
 
     if AccessToken:
@@ -39,12 +40,12 @@ def verifyGoogleUser(code: str) -> dict:
 
 def googleObtainToken(code: str) -> str:
     """
-        Use an authorization code to fetch `JSON Web Tokens` from the Google servers. This will always give you JWT's as your Google account exists.
-        
-        Returns the `access token` obtained from the response.
+    Use an authorization code to fetch `JSON Web Tokens` from the Google servers. This will always give you JWT's as your Google account exists.
+
+    Returns the `access token` obtained from the response.
     """
     redirect_uri = "http://localhost:3000"
-    
+
     data = {
         "code": code,
         "client_id": settings.GOOGLE_OAUTH2_CLIENT_ID,
@@ -63,7 +64,7 @@ def googleObtainToken(code: str) -> str:
 
 def googleObtainUserInfo(*, accessToken: str) -> dict:
     """
-        Use an `access token` to fetch the user information from the Google servers.
+    Use an `access token` to fetch the user information from the Google servers.
     """
     response = requests.get(GOOGLE_USER_INFO_URL, params={"access_token": accessToken})
 
@@ -74,11 +75,11 @@ def googleObtainUserInfo(*, accessToken: str) -> dict:
     return userInfo
 
 
-def jwtLogin(user) -> dict:
+def jwtLogin(user) -> JWT:
     """
-        A customized version of obtaining `JSON Web Tokens`. 
-        
-        Adds custom claims to the `access token` which will be used in the frontend.
+    A customized version of obtaining `JSON Web Tokens`.
+
+    Adds custom claims to the `access token` which will be used in the frontend.
     """
     refresh = RefreshToken.for_user(user)
     access = refresh.access_token
@@ -89,13 +90,12 @@ def jwtLogin(user) -> dict:
     access["email"] = user.email
     access["verified"] = user.verified
 
-    tokens = {"refresh": str(refresh), "access": str(access)}
-    return tokens
+    return JWT(refresh=str(refresh), access=str(access))
 
 
-def createGoogleUser(UserInfo: dict) -> User:
+def createGoogleUser(UserInfo: dict):
     """
-        Create a user object from the user information fetched from Google.
+    Create a user object from the user information fetched from Google.
     """
     email: str = UserInfo["email"]
     username: str = email.split("@")[0]

@@ -2,12 +2,18 @@ from rest_framework.serializers import ModelSerializer
 from .models import *
 
 
+class SellerSerializer(ModelSerializer):
+    class Meta:
+        model = Seller
+        fields = ["id", "name"]
+
+
 class ProductSerializer(ModelSerializer):
+    seller = SellerSerializer()
+
     class Meta:
         model = Product
-        exclude = [
-            'created_at','updated_at','stock'
-        ]
+        exclude = ["created_at", "updated_at", "stock"]
 
 
 class CategorySerializer(ModelSerializer):
@@ -21,7 +27,7 @@ class CategorySerializer(ModelSerializer):
 class OrderItemSerializer(ModelSerializer):
     class Meta:
         model = OrderItem
-        exclude = ['created_at','updated_at','date_added','order']
+        exclude = ["created_at", "updated_at", "date_added", "order"]
 
 
 class OrderSerializer(ModelSerializer):
@@ -33,7 +39,8 @@ class OrderSerializer(ModelSerializer):
 
 
 class CartSerializer(ModelSerializer):
-    items = OrderItemSerializer(many=True)    
+    items = OrderItemSerializer(many=True)
+
 
 class ShippingAddressSerializer(ModelSerializer):
     class Meta:

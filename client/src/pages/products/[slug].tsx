@@ -147,6 +147,11 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
             <Divider />
             <CustomText
               variant="subheading"
+              fontSize={"xl"}
+              text={`Sold by: ${product.seller.name}`}
+            />
+            <CustomText
+              variant="subheading"
               color="tertiary"
               text={`₹${product.price.toLocaleString("en-IN")}`}
             />

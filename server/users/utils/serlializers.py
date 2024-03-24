@@ -25,9 +25,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username", "email", "password")
 
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
 
 class EditProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,8 +38,3 @@ class EditProfileSerializer(serializers.ModelSerializer):
 
     def is_valid(self, *, raise_exception=False):
         super().is_valid(raise_exception=raise_exception)
-
-class EmailVerificationSerlializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["username", "email", "password"]

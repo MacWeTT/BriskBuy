@@ -6,3 +6,8 @@ class CodeRequest(BaseModel):
     scope: str
     authuser: str
     prompt: str
+
+
+class JWT(BaseModel):
+    access: str
+    refresh: str
