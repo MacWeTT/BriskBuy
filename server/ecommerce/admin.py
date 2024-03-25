@@ -25,4 +25,5 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.ShippingAddress)
+admin.site.register(models.WishlistIem)
 admin.site.register(models.Seller)

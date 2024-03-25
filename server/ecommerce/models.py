@@ -80,6 +80,12 @@ class Order(Base):
         return cart_items
 
 
+class WishlistIem(Base):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+
 class OrderItem(Base):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)

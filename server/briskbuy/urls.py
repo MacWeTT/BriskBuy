@@ -16,14 +16,14 @@ docs = get_schema_view(
         license=openapi.License(name="Your License"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny),
+    permission_classes=(permissions.AllowAny,),
 )
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # path("", docs.with_ui("swagger"), name="API Docs"),
-    path("api/", include("ecommerce.api.urls"), name="E-Commerce API"),
+    path("", docs.with_ui("swagger"), name="API Docs"),
+    path("api/", include("ecommerce.urls"), name="E-Commerce API"),
     path("users/", include("users.urls"), name="User API"),
 ]
 

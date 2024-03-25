@@ -75,7 +75,7 @@ def googleObtainUserInfo(*, accessToken: str) -> dict:
     return userInfo
 
 
-def jwtLogin(user) -> JWT:
+def jwtLogin(user) -> dict:
     """
     A customized version of obtaining `JSON Web Tokens`.
 
@@ -90,7 +90,7 @@ def jwtLogin(user) -> JWT:
     access["email"] = user.email
     access["verified"] = user.verified
 
-    return JWT(refresh=str(refresh), access=str(access))
+    return {"access": str(access), "refresh": str(refresh)}
 
 
 def createGoogleUser(UserInfo: dict):

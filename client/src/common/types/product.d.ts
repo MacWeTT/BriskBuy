@@ -13,14 +13,9 @@ export interface Product {
   slug: string;
   image: string;
   description: string;
-  seller: Seller;
+  seller: string;
   stock: number;
   price: number;
   digital: boolean;
   category: string;
-}
-
-export interface Seller {
-  id: string;
-  name: string;
 }

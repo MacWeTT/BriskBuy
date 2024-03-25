@@ -1,11 +1,11 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField
 from .models import *
 
 
 class SellerSerializer(ModelSerializer):
     class Meta:
         model = Seller
-        fields = ["id", "name"]
+        fields = ["name"]
 
 
 class ProductSerializer(ModelSerializer):
@@ -14,6 +14,16 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
         exclude = ["created_at", "updated_at", "stock"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["seller"] = instance.seller.name
+        return representation
+
+
+class WishlistSerializer(ModelSerializer):
+    class Meta:
+        model = WishlistIem
 
 
 class CategorySerializer(ModelSerializer):

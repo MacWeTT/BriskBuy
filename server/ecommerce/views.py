@@ -1,18 +1,16 @@
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
-from .serializers import (
-    ProductSerializer,
-    CategorySerializer,
-    OrderSerializer,
-    ShippingAddressSerializer,
-)
 from .models import Product, Category, Order, OrderItem, ShippingAddress
-from django.db.models import Q
+from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth.models import AbstractBaseUser
+from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.utils.text import slugify
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from .services.schema import *
+from typing import Optional
+from .serializers import *
 
 
 # Create your views here.
@@ -32,33 +30,28 @@ class ProductListView(APIView):
 
     def get(self, request):
         try:
-            query = request.GET.get("query", None)
+            query: Optional[str] = request.query_params.get("query", None)
 
-            if query:
-                is_slug = query == slugify(query)
-
-                if is_slug:
-                    # If we are accessing product's own page
-                    try:
-                        product = Product.objects.get(slug=slugify(query))
-                        serializer = self.serializer_class(product)
-                        return Response(serializer.data)
-                    except Product.DoesNotExist:
-                        return Response(
-                            {"message": "Product not found"},
-                            status=status.HTTP_404_NOT_FOUND,
-                        )
-                else:
-                    # Query all products and filter items matching queries
-                    products = Product.objects.filter(
-                        Q(name__icontains=query)
-                        | Q(description__icontains=query)
-                        | Q(slug=slugify(query))
+            if query == slugify(query):
+                try:
+                    product = Product.objects.get(slug=slugify(query))
+                    serializer = self.serializer_class(product)
+                    return Response(serializer.data)
+                except Product.DoesNotExist:
+                    return Response(
+                        {"message": "Product not found"},
+                        status=status.HTTP_404_NOT_FOUND,
                     )
-                    category_products = Product.objects.filter(
-                        category__name__icontains=query
-                    )
-                    products = products.union(category_products)
+            elif query is not None:
+                products = Product.objects.filter(
+                    Q(name__icontains=query)
+                    | Q(description__icontains=query)
+                    | Q(slug=slugify(query))
+                )
+                category_products = Product.objects.filter(
+                    category__name__icontains=query
+                )
+                products = products.union(category_products)
             else:
                 products = Product.objects.all()
 
@@ -78,7 +71,8 @@ class CategoryListView(APIView):
 
     def get(self, request):
         try:
-            category = request.GET.get("category", None)
+            category: Optional[str] = request.query_params.get("category", None)
+
             if category:
                 category = Category.objects.filter(name=category)
             else:
@@ -96,7 +90,8 @@ class CategoryListView(APIView):
 class OrderView(APIView):
     def get(self, request):
         try:
-            customer = request.user
+            customer: Optional[AbstractBaseUser] = request.user
+
             if customer:
                 order = Order.objects.filter(customer=customer, complete=False)
             else:
@@ -105,10 +100,14 @@ class OrderView(APIView):
             serializer = OrderSerializer(order, many=True)
             cartItems = serializer.data
             total = 0
+
             for item in cartItems:
                 total += item["price"] * item["quantity"]
-            response = {"cartItems": serializer.data, "total": total}
-            return Response(response, status=status.HTTP_200_OK)
+
+            return Response(
+                {"cartItems": serializer.data, "total": total},
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             print(e)
             return Response(
@@ -154,8 +153,8 @@ class CartView(APIView):
 
     def post(self, request):
         try:
-            data: dict = request.data
             user: str = request.user
+            data: dict = request.data
             product = Product.objects.get(id=data["product_id"])
             order, created = Order.objects.get_or_create(customer=user, complete=False)
             if created:
@@ -191,9 +190,9 @@ class CartView(APIView):
 
     def patch(self, request):
         try:
-            data = request.data
-            method = data["method"]
-            item = OrderItem.objects.get(id=data["product_id"])
+            request = PatchCartRequest(**request.data)
+            item = OrderItem.objects.get(id=request.product_id)
+            method = request.method
 
             if method == "INCREASE":
                 item.quantity += 1
@@ -210,6 +209,7 @@ class CartView(APIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
+            print(e)
             return Response(
                 {"message": f"Server error : {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -217,7 +217,7 @@ class CartView(APIView):
 
     def delete(self, request):
         try:
-            user = request.user
+            user: AbstractBaseUser = request.user
             order = Order.objects.get(customer=user, complete=False)
             order.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -226,6 +226,18 @@ class CartView(APIView):
                 {"message": f"Server error : {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class WishlistView(APIView):
+    serializer_class = WishlistSerializer
+
+    def get(self, request):
+        items = WishlistIem.objects.filter(user=request.user)
+        response = [self.serializer_class(item) for item in items]
+        return Response(response, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        pass
 
 
 class ShippingAddressView(APIView):

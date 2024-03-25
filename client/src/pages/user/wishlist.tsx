@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { Product } from "@/common/types/product";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -49,6 +49,17 @@ const Wishlist = () => {
   const toast = useToast();
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  const handleMoveToCart = async (item: Product) => {
+    dispatch(addItem(item));
+    dispatch(removeItemFromWishlist(item.id));
+    toast({
+      position: "top",
+      status: "success",
+      title: "Item moved to cart.",
+      duration: 900,
+    });
+  };
 
   return (
     <>
@@ -114,14 +125,7 @@ const Wishlist = () => {
                               variant="solid"
                               colorScheme="teal"
                               onClick={() => {
-                                dispatch(addItem(item));
-                                dispatch(removeItemFromWishlist(item.id));
-                                toast({
-                                  position: "top",
-                                  status: "success",
-                                  title: "Item moved to cart.",
-                                  duration: 900,
-                                });
+                                handleMoveToCart(item);
                               }}
                             >
                               Move To Cart

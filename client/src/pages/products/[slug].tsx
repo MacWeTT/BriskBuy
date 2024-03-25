@@ -148,7 +148,7 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
             <CustomText
               variant="subheading"
               fontSize={"xl"}
-              text={`Sold by: ${product.seller.name}`}
+              text={`Sold by: ${product.seller}`}
             />
             <CustomText
               variant="subheading"
@@ -164,6 +164,7 @@ const ProductDetailsPage = ({ product }: ProductDetailsPageProps) => {
                 onClick={handleAddToCart}
               />
               <CustomButton
+                disabled={true}
                 variant="border"
                 text={
                   alreadyInWishlist ? "Added To Wishlist" : "Add to Wishlist"

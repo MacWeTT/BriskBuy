@@ -47,6 +47,7 @@ const Cart = () => {
   const router = useRouter();
   const toast = useToast();
   const [patchCart] = usePatchCartMutation();
+  const [deleteCart] = useDeleteCartMutation();
 
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -95,6 +96,30 @@ const Cart = () => {
     }
   };
 
+  const handleCartClear = async () => {
+    try {
+      await deleteCart({}).unwrap();
+      dispatch(clearCart());
+      toast({
+        title: "Success",
+        description: "Cart has been cleared.",
+        status: "success",
+        position: "top",
+        duration: 1000,
+        isClosable: true,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.data.detail,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -117,7 +142,7 @@ const Cart = () => {
             />
             <CustomText
               variant="subheading"
-              text={`Price : ₹${total.toLocaleString("en-IN")}`}
+              text={`Price : ₹${total ? total.toLocaleString("en-IN") : 0}`}
             />
             <CustomButton
               icon={<BiSolidChevronRight />}
@@ -205,7 +230,7 @@ const Cart = () => {
                   variant="solid"
                   colorScheme="red"
                   onClick={() => {
-                    dispatch(clearCart());
+                    handleCartClear();
                   }}
                   text="Clear Cart"
                 />
