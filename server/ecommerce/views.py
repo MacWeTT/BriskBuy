@@ -232,12 +232,22 @@ class WishlistView(APIView):
     serializer_class = WishlistSerializer
 
     def get(self, request):
-        items = WishlistIem.objects.filter(user=request.user)
+        items = WishlistItem.objects.filter(user=request.user)
         response = [self.serializer_class(item) for item in items]
         return Response(response, status=status.HTTP_200_OK)
 
     def post(self, request):
-        pass
+        product = get_object_or_404(Product, id=request.data["id"])
+        item = WishlistItem.objects.create(customer=request.user, product=product)
+        data = WishlistSerializer(item).data
+
+        return Response(
+            {
+                "message": "Item has been successfully added to wishlist.",
+                "details": data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class ShippingAddressView(APIView):

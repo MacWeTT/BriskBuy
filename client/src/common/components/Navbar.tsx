@@ -25,15 +25,15 @@ import CustomButton from "./UI/CustomButton";
 import CategoryNav from "./CategoryNav";
 
 //React-Icons
-import { BiShoppingBag, BiChevronDown, BiHeart } from "react-icons/bi";
-import { TbUserEdit } from "react-icons/tb";
-import { FaSearch } from "react-icons/fa";
+import { BiChevronDown, BiHeart } from "react-icons/bi";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { AiOutlineMessage } from "react-icons/ai";
+import { FaSearch } from "react-icons/fa";
+import { BsPerson } from "react-icons/bs";
 
 const Navbar = () => {
   const { user, isLoggedIn } = useSelector((state: RootState) => state.user);
   const { cartItems } = useSelector((state: RootState) => state.cart);
-  const { wishlistItems } = useSelector((state: RootState) => state.wishlist);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -101,35 +101,52 @@ const Navbar = () => {
               <Portal>
                 <PopoverContent width="max-content">
                   <PopoverArrow />
-                  <PopoverHeader textAlign="center">Your Account</PopoverHeader>
                   {isLoggedIn ? (
                     <PopoverBody>
-                      <Link href="/user/edit-profile">
+                      <Link href="/user/profile">
                         <Flex
                           position="relative"
-                          alignItems="center"
+                          alignItems="stretch"
                           fontSize="28"
                           my={2}
                         >
-                          <TbUserEdit />
+                          <BsPerson />
                           <CustomText
+                            ml={2}
                             variant="paragraph"
-                            text="Edit Profile"
+                            text="Profile"
                             px="1"
                           />
                         </Flex>
                       </Link>
-                      <Link href="/user/orders">
+                      <Link href="/user/wishlist">
+                        <Flex
+                          position="relative"
+                          alignItems="stretch"
+                          fontSize="28"
+                          my={2}
+                        >
+                          <BiHeart />
+                          <CustomText
+                            ml={2}
+                            variant="paragraph"
+                            text="Wishlist"
+                            px="1"
+                          />
+                        </Flex>
+                      </Link>
+                      <Link href="/user/messages">
                         <Flex
                           position="relative"
                           alignItems="center"
                           fontSize="28"
                           my={2}
                         >
-                          <BiShoppingBag />
+                          <AiOutlineMessage />
                           <CustomText
+                            ml={2}
                             variant="paragraph"
-                            text="Your Orders"
+                            text="Messages"
                             px="1"
                           />
                         </Flex>
@@ -191,38 +208,6 @@ const Navbar = () => {
                   justifyContent="center"
                 >
                   {cartItems.length}
-                </Flex>
-              </Flex>
-            </Link>
-            <Link href="/user/wishlist">
-              <Flex
-                position="relative"
-                justifyContent="center"
-                alignItems="center"
-                fontSize="32"
-                px="1"
-                mx="2"
-                _hover={{
-                  transform: "scale(1.1)",
-                }}
-              >
-                <BiHeart />
-                <Flex
-                  display={wishlistItems.length > 0 ? "flex" : "none"}
-                  borderRadius="9999px"
-                  bgColor="tertiary"
-                  color="black"
-                  position="absolute"
-                  right="-5px"
-                  top="-5px"
-                  p="1"
-                  fontSize="12"
-                  w="20px"
-                  h="20px"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  {wishlistItems.length}
                 </Flex>
               </Flex>
             </Link>

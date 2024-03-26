@@ -5,6 +5,7 @@ import jwtDecode from "jwt-decode";
 //Guest User
 const GuestUser: User = {
   pk: 0,
+  user_id: 0,
   username: "Guest",
   email: "guest@localhost",
   name: "Guest",
@@ -34,6 +35,7 @@ const userSlice = createSlice({
       const decoded: JWT = jwtDecode(action.payload.access);
       state.user = {
         pk: decoded.user_id,
+        user_id: decoded.user_id,
         username: decoded.username,
         email: decoded.email,
         name: decoded.name,

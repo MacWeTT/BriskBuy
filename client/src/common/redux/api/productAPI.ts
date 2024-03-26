@@ -3,6 +3,7 @@ import EcommerceBaseQuery from "./reAuth/EcommerceBaseQuery";
 import { addToCartDTO, patchCartDTO } from "@/common/types/orders";
 import { ShippingAddress } from "@/common/types/user";
 import { CartItem } from "@/common/types/cartItem";
+import { Product } from "@/common/types/product";
 
 export const productAPI = createApi({
   reducerPath: "productAPI",
@@ -31,6 +32,13 @@ export const productAPI = createApi({
         method: "DELETE",
       }),
     }),
+    addToWishlist: builder.mutation({
+      query: (body: Product) => ({
+        url: "api/wishlist/",
+        method: "POST",
+        body: body,
+      }),
+    }),
     addShipping: builder.mutation({
       query: (body: ShippingAddress) => ({
         url: "api/shipping/",
@@ -48,5 +56,6 @@ export const {
   usePatchCartMutation,
   useDeleteCartMutation,
   //Shipping Address Mutations
+  useAddToWishlistMutation,
   useAddShippingMutation,
 } = productAPI;

@@ -23,7 +23,8 @@ class ProductSerializer(ModelSerializer):
 
 class WishlistSerializer(ModelSerializer):
     class Meta:
-        model = WishlistIem
+        model = WishlistItem
+        fields = "__all__"
 
 
 class CategorySerializer(ModelSerializer):

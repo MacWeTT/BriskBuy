@@ -25,6 +25,7 @@ urlpatterns = [
     path("", docs.with_ui("swagger"), name="API Docs"),
     path("api/", include("ecommerce.urls"), name="E-Commerce API"),
     path("users/", include("users.urls"), name="User API"),
+    path("chat/", include("chat.urls"), name="Chat API"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

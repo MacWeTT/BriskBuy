@@ -234,6 +234,14 @@ const Cart = () => {
                   }}
                   text="Clear Cart"
                 />
+                <CustomButton
+                  variant="solid"
+                  colorScheme="red"
+                  onClick={() => {
+                    dispatch(clearCart());
+                  }}
+                  text="Sasta Clear Cart"
+                />
               </Flex>
             </>
           ) : (

@@ -38,6 +38,7 @@ import {
   clearWishlist,
   removeItemFromWishlist,
 } from "@/common/redux/reducers/wishlistSlice";
+import { useAddToWishlistMutation } from "@/common/redux/api/productAPI";
 
 const Wishlist = () => {
   const { wishlistItems, total } = useSelector(
@@ -48,17 +49,21 @@ const Wishlist = () => {
   const router = useRouter();
   const toast = useToast();
 
+  const [addToWishlist] = useAddToWishlistMutation();
+
   const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const handleMoveToCart = async (item: Product) => {
-    dispatch(addItem(item));
-    dispatch(removeItemFromWishlist(item.id));
-    toast({
-      position: "top",
-      status: "success",
-      title: "Item moved to cart.",
-      duration: 900,
-    });
+    const response = await addToWishlist(item).unwrap();
+    console.log(response);
+    // dispatch(addItem(item));
+    // dispatch(removeItemFromWishlist(item.id));
+    // toast({
+    //   position: "top",
+    //   status: "success",
+    //   title: "Item moved to cart.",
+    //   duration: 900,
+    // });
   };
 
   return (
@@ -75,15 +80,11 @@ const Wishlist = () => {
             mb={6}
             route="/"
           />
-          <CustomText variant="heading" text="Your Wishlist" />
           <Flex justifyContent="space-between" alignItems="flex-end">
+            <CustomText variant="heading" text="Your Wishlist" />
             <CustomText
               variant="subheading"
               text={`Items : ${wishlistItems.length}`}
-            />
-            <CustomText
-              variant="subheading"
-              text={`Price : ₹${total.toLocaleString("en-IN")}`}
             />
           </Flex>
         </Container>
@@ -121,15 +122,25 @@ const Wishlist = () => {
                           <Td>{item.name}</Td>
                           <Td>{`₹${item.price.toLocaleString("en-IN")}`}</Td>
                           <Td>
-                            <Button
-                              variant="solid"
-                              colorScheme="teal"
-                              onClick={() => {
-                                handleMoveToCart(item);
-                              }}
-                            >
-                              Move To Cart
-                            </Button>
+                            <Box className="flex justify-evenly items-center">
+                              <Button
+                                variant="solid"
+                                colorScheme="teal"
+                                onClick={() => {
+                                  handleMoveToCart(item);
+                                }}
+                              >
+                                Move To Cart
+                              </Button>
+                              <Button
+                                colorScheme="red"
+                                onClick={() => {
+                                  handleMoveToCart(item);
+                                }}
+                              >
+                                Remove
+                              </Button>
+                            </Box>
                           </Td>
                         </Tr>
                       );

@@ -1,29 +1,26 @@
-from django.contrib.auth import get_user_model
-from django.utils import timezone
+from shortuuidfield import ShortUUIDField
+from users.models import User
 from django.db import models
-import uuid
-
-User = get_user_model()
 
 
-class Base(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(db_index=True, default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-
-class ChatRoom(Base):
-    members = models.ManyToManyField(User)
+class ChatRoom(models.Model):
+    room_id = ShortUUIDField(primary_key=True)
+    type = models.CharField(max_length=10, default="DM")
+    member = models.ManyToManyField(User)
     name = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self) -> str:
-        return self.id + "->" + str(self.name)
+        return self.room_id + "->" + str(self.name)
 
 
-class Message(Base):
+class OnlineUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.user.username
+
+
+class Message(models.Model):
     chat = models.ForeignKey(ChatRoom, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     message = models.TextField()

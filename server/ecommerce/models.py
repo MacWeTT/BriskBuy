@@ -1,9 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth import get_user_model
+from users.models import User
 import uuid
-
-User = get_user_model()
 
 
 class Base(models.Model):
@@ -80,7 +78,7 @@ class Order(Base):
         return cart_items
 
 
-class WishlistIem(Base):
+class WishlistItem(Base):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     date_added = models.DateTimeField(auto_now_add=True)

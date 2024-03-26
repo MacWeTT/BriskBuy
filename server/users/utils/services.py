@@ -1,7 +1,6 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from .types import JWT
 from django.conf import settings
 import requests
 
@@ -85,10 +84,11 @@ def jwtLogin(user) -> dict:
     access = refresh.access_token
 
     # Custom Claims
-    access["username"] = user.username
     access["name"] = str(user.first_name + " " + user.last_name)
-    access["email"] = user.email
+    access["username"] = user.username
     access["verified"] = user.verified
+    access["user_id"] = user.user_id
+    access["email"] = user.email
 
     return {"access": str(access), "refresh": str(refresh)}
 

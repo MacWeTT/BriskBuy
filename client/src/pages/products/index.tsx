@@ -1,7 +1,6 @@
 import { GetServerSideProps } from "next";
 import { Box, Heading, SimpleGrid } from "@chakra-ui/react";
 import { Product } from "@/common/types/product";
-
 import axios from "axios";
 
 async function fetchProductData(query: string) {
@@ -10,6 +9,7 @@ async function fetchProductData(query: string) {
     const response = await axios.get(`${backendURL}/api/products/`, {
       params: { query: query },
     });
+    console.log(response);
     return response.data.results;
   } catch (err) {
     console.log(err);

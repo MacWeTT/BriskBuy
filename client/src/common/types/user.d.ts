@@ -19,6 +19,7 @@ export interface ShippingAddress {
 
 export interface User {
   pk: number;
+  user_id: number;
   username: string;
   email: string;
   name: string;

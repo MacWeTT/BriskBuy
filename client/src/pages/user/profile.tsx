@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 // Redux
-import { useSelector, useDispatch } from "react-redux";
 import { useEditUserProfileMutation } from "@/common/redux/api/authAPI";
-import { RootState } from "@/common/redux/store";
 import { updateUser } from "@/common/redux/reducers/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/common/redux/store";
+import useGetOrders from "@/hooks/useGetOrders";
 import { User } from "@/common/types/user";
 
 // Chakra UI
@@ -21,10 +22,12 @@ import {
   Tr,
   Td,
   Input,
+  Container,
 } from "@chakra-ui/react";
 import { MdVerified } from "react-icons/md";
 
 // Custom components
+import { BiSolidChevronLeft } from "react-icons/bi";
 import PageWrapper from "@/common/components/UI/PageWrapper";
 import CustomText from "@/common/components/UI/CustomText";
 import CustomButton from "@/common/components/UI/CustomButton";
@@ -33,6 +36,7 @@ const EditProfile = () => {
   const dispatch = useDispatch();
   const toast = useToast();
   const router = useRouter();
+  const { orders } = useGetOrders();
 
   const { user } = useSelector((state: RootState) => state.user);
   const [edit, { isLoading }] = useEditUserProfileMutation();
@@ -78,7 +82,7 @@ const EditProfile = () => {
       </Head>
       <PageWrapper m={8} maxW="3xl" mx="auto">
         <Box background="quaternary" p={4} borderRadius="md">
-          <CustomText variant="heading" text="Your profile" ml={4} mb={8} />
+          <CustomText variant="heading" text="Profile Details" ml={4} mb={8} />
           <Table variant="simple">
             <Tbody>
               <Tr>
@@ -158,6 +162,79 @@ const EditProfile = () => {
             </Button>
           </Flex>
         </Box>
+        <Container maxW="4xl" bgColor="quaternary" mt={8} p={8} rounded="md">
+          <CustomButton
+            icon={<BiSolidChevronLeft />}
+            variant="border-icon"
+            text="Continue Shopping"
+            mb={6}
+            route="/"
+          />
+          <CustomText variant="heading" text="Your Orders" pb={8} />
+          {orders.length > 0 ? (
+            <>
+              {/* <TableContainer>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th></Th>
+                      <Th>Product</Th>
+                      <Th>Price</Th>
+                      <Th>Quantity</Th>
+                      <Th>Total</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {orders.map((item) => {
+                      return (
+                        <Tr key={item.id}>
+                          <Th>
+                            <Card w={20} h={20} my={8}>
+                              <CardBody p={1}>
+                                <Image
+                                  alt={item.name}
+                                  src={`${backendURL}${item.image}`}
+                                  cursor="pointer"
+                                  onClick={() =>
+                                    router.push(`/products/${item.slug}`)
+                                  }
+                                />
+                              </CardBody>
+                            </Card>
+                          </Th>
+                          <Td>{item.name}</Td>
+                          <Td>{`₹${item.price.toLocaleString("en-IN")}`}</Td>
+                          <Td>
+                            <Flex justifyContent="space-around">
+                              <Text alignSelf="center">{item.quantity}</Text>
+                              <Flex
+                                direction="column"
+                                gap={1}
+                                fontSize="24px"
+                                _hover={{
+                                  cursor: "pointer",
+                                }}
+                              ></Flex>
+                            </Flex>
+                          </Td>
+                          <Td>{`₹${(item.quantity * item.price).toLocaleString(
+                            "en-IN"
+                          )}`}</Td>
+                        </Tr>
+                      );
+                    })}
+                  </Tbody>
+                </Table>
+              </TableContainer> */}
+            </>
+          ) : (
+            <CustomText
+              variant="subheading"
+              text="Your have no orders!"
+              textAlign="center"
+            />
+          )}
+        </Container>
       </PageWrapper>
     </>
   );
